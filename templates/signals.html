@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیگنال ها</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            font-family: 'Vazir', sans-serif;
+        }
+        .signal-card {
+            transition: transform 0.3s ease;
+        }
+        .signal-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6">
+    <h1 class="text-3xl font-bold text-white mb-6">📊 سیگنال ها</h1>
+    <div id="signals" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl w-full"></div>
+    <script>
+        function loadSignals() {
+            fetch('/signals')
+                .then(response => response.json())
+                .then(data => {
+                    const signalsDiv = document.getElementById('signals');
+                    signalsDiv.innerHTML = '';
+                    data.forEach(signal => {
+                        const card = document.createElement('div');
+                        card.className = 'signal-card bg-white p-4 rounded-lg shadow-lg text-gray-800';
+                        card.innerHTML = `
+                            <p><strong>نام ارز:</strong> ${signal.currency}</p>
+                            <p><strong>جهت:</strong> ${signal.direction}</p>
+                            <p><strong>حد سود:</strong> ${signal.take_profit}</p>
+                            <p><strong>حد ضرر:</strong> ${signal.stop_loss}</p>
+                        `;
+                        signalsDiv.appendChild(card);
+                    });
+                });
+        }
+        loadSignals();
+        setInterval(loadSignals, 60000); // Refresh every minute
+    </script>
+</body>
+</html>
