@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بیت کوین کلیکر حرفه‌ای</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, #0c0e1a 0%, #000000 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            touch-action: manipulation;
+        }
+        
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+        
+        .score-display {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(247, 147, 26, 0.8);
+            background: linear-gradient(45deg, #f7931a, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .bitcoin-3d {
+            width: 320px; /* بزرگتر شده */
+            height: 320px; /* بزرگتر شده */
+            position: relative;
+            cursor: pointer;
+            margin: 30px 0;
+            transform-style: preserve-3d;
+            transition: transform 0.3s;
+        }
+        
+        .bitcoin-3d:hover {
+            transform: scale(1.05) rotateY(5deg);
+        }
+        
+        .bitcoin-3d:active {
+            transform: scale(0.95) rotateY(-5deg);
+        }
+        
+        .bitcoin-front, .bitcoin-back {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 140px; /* بزرگتر شده */
+            box-shadow: 
+                0 0 50px rgba(247, 147, 26, 0.8), /* قوی‌تر شده */
+                inset 0 0 40px rgba(255, 215, 0, 0.4); /* قوی‌تر شده */
+        }
+        
+        .bitcoin-front {
+            background: radial-gradient(circle at 30% 30%, #f7931a, #b36200);
+            transform: rotateY(0deg);
+        }
+        
+        .bitcoin-back {
+            background: radial-gradient(circle at 70% 30%, #f7931a, #b36200);
+            transform: rotateY(180deg);
+        }
+        
+        .bitcoin-symbol {
+            color: #ffd700;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6); /* قوی‌تر شده */
+        }
+        
+        .dollar-effect {
+            position: absolute;
+            font-size: 3.5rem; /* بزرگتر شده */
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+            animation: floatUp 1.5s ease-out forwards;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.9); /* قوی‌تر شده */
+            filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.8)); /* قوی‌تر شده */
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120px) scale(1.8) rotate(10deg);
+                opacity: 0;
+            }
+        }
+        
+        .upgrade-container {
+            margin-top: 30px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .upgrade-btn {
+            background: linear-gradient(45deg, #f7931a, #ff9800);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(247, 147, 26, 0.5);
+            font-weight: bold;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .upgrade-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(247, 147, 26, 0.7);
+        }
+        
+        .upgrade-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .upgrade-btn:disabled {
+            background: linear-gradient(45deg, #555, #777);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .stats {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+        
+        .click-effect {
+            position: absolute;
+            width: 40px; /* بزرگتر شده */
+            height: 40px; /* بزرگتر شده */
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.9) 0%, transparent 70%); /* قوی‌تر شده */
+            pointer-events: none;
+            animation: ripple 0.6s ease-out forwards;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 10px; /* بزرگتر شده */
+            height: 10px; /* بزرگتر شده */
+            background-color: #f7931a;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 1s ease-out forwards;
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .auto-rotate {
+            animation: autoRotate 20s infinite linear;
+        }
+        
+        @keyframes autoRotate {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .vibration {
+            animation: vibrate 0.3s linear;
+        }
+        
+        @keyframes vibrate {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
+        
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 600px) {
+            .bitcoin-3d {
+                width: 260px; /* تنظیم برای موبایل */
+                height: 260px; /* تنظیم برای موبایل */
+            }
+            
+            .bitcoin-front, .bitcoin-back {
+                font-size: 110px; /* تنظیم برای موبایل */
+            }
+            
+            .score-display {
+                font-size: 2.2rem;
+            }
+            
+            .dollar-effect {
+                font-size: 2.8rem; /* تنظیم برای موبایل */
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .bitcoin-3d {
+                width: 220px; /* تنظیم برای موبایل کوچک */
+                height: 220px; /* تنظیم برای موبایل کوچک */
+            }
+            
+            .bitcoin-front, .bitcoin-back {
+                font-size: 90px; /* تنظیم برای موبایل کوچک */
+            }
+            
+            .stats {
+                bottom: 10px;
+                left: 10px;
+                font-size: 0.8rem;
+            }
+            
+            .sound-toggle {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* استایل برای حالت لمسی */
+        .touch-indicator {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            pointer-events: none;
+            animation: touchPulse 2s infinite;
+            display: none;
+        }
+        
+        @keyframes touchPulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="touch-indicator" id="touch-indicator"></div>
+    <button class="sound-toggle" id="sound-toggle">🔊</button>
+    
+    <div class="container">
+        <div class="score-display" id="score">0 BTC</div>
+        
+        <div class="bitcoin-3d" id="bitcoin">
+            <div class="bitcoin-front">
+                <span class="bitcoin-symbol">₿</span>
+            </div>
+            <div class="bitcoin-back">
+                <span class="bitcoin-symbol">₿</span>
+            </div>
+        </div>
+        
+        <div class="upgrade-container">
+            <button class="upgrade-btn" id="upgrade-btn">ارتقا قدرت کلیک (۱۰,۰۰۰ سکه)</button>
+        </div>
+    </div>
+    
+    <div class="stats">
+        <div>قدرت کلیک: <span id="click-power">1</span></div>
+        <div>سطح ارتقا: <span id="upgrade-level">1</span></div>
+    </div>
+
+    <script>
+        // ایجاد ستاره‌های پس‌زمینه
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // بررسی دستگاه لمسی
+        function isTouchDevice() {
+            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        }
+        
+        // نشانگر لمسی
+        function showTouchIndicator(x, y) {
+            if (!isTouchDevice()) return;
+            
+            const indicator = document.getElementById('touch-indicator');
+            indicator.style.display = 'block';
+            indicator.style.left = `${x - 30}px`;
+            indicator.style.top = `${y - 30}px`;
+            
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 2000);
+        }
+        
+        // مدیریت صدا
+        let soundEnabled = true;
+        const clickSounds = [];
+        
+        function initSounds() {
+            // ایجاد چندین صدا برای تنوع
+            for (let i = 0; i < 3; i++) {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 800 + (i * 100); // فرکانس‌های مختلف
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+                
+                clickSounds.push({audioContext, oscillator, gainNode});
+            }
+        }
+        
+        function playClickSound() {
+            if (!soundEnabled) return;
+            
+            try {
+                const randomSound = clickSounds[Math.floor(Math.random() * clickSounds.length)];
+                const audioContext = randomSound.audioContext;
+                
+                // اگر audioContext suspend شده باشد، resume کنیم
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                const now = audioContext.currentTime;
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(800 + Math.random() * 200, now);
+                
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.1);
+                
+            } catch (error) {
+                console.log('خطا در پخش صدا:', error);
+            }
+        }
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const soundToggle = document.getElementById('sound-toggle');
+            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+            
+            // ذخیره وضعیت صدا
+            localStorage.setItem('bitcoinClickerSound', soundEnabled.toString());
+        }
+        
+        function loadSoundSetting() {
+            const savedSound = localStorage.getItem('bitcoinClickerSound');
+            if (savedSound !== null) {
+                soundEnabled = savedSound === 'true';
+            }
+            const soundToggle = document.getElementById('sound-toggle');
+            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+        }
+        
+        // عناصر DOM
+        const bitcoin = document.getElementById('bitcoin');
+        const scoreElement = document.getElementById('score');
+        const upgradeBtn = document.getElementById('upgrade-btn');
+        const clickPowerElement = document.getElementById('click-power');
+        const upgradeLevelElement = document.getElementById('upgrade-level');
+        const soundToggle = document.getElementById('sound-toggle');
+        
+        // داده‌های بازی
+        let gameData = {
+            score: 0,
+            clickPower: 1,
+            upgradeLevel: 1,
+            nextUpgradeCost: 10000,
+            lastUpdate: Date.now()
+        };
+        
+        // بارگذاری داده‌ها از localStorage
+        function loadGameData() {
+            const savedData = localStorage.getItem('bitcoinClickerProData');
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                gameData = { ...gameData, ...parsedData };
+                
+                // محاسبه هزینه ارتقای بعدی
+                calculateNextUpgradeCost();
+            }
+            updateUI();
+        }
+        
+        // ذخیره داده‌ها در localStorage
+        function saveGameData() {
+            localStorage.setItem('bitcoinClickerProData', JSON.stringify(gameData));
+        }
+        
+        // محاسبه هزینه ارتقای بعدی
+        function calculateNextUpgradeCost() {
+            // هزینه ارتقا به صورت تصاعدی افزایش می‌یابد
+            gameData.nextUpgradeCost = Math.floor(10000 * Math.pow(1.5, gameData.upgradeLevel - 1));
+        }
+        
+        // به‌روزرسانی UI
+        function updateUI() {
+            scoreElement.textContent = formatNumber(gameData.score) + " BTC";
+            clickPowerElement.textContent = formatNumber(gameData.clickPower);
+            upgradeLevelElement.textContent = gameData.upgradeLevel;
+            
+            // به‌روزرسانی متن دکمه ارتقا
+            upgradeBtn.textContent = `ارتقا قدرت کلیک (${formatNumber(gameData.nextUpgradeCost)} سکه)`;
+            upgradeBtn.disabled = gameData.score < gameData.nextUpgradeCost;
+            
+            // چرخش خودکار بیت‌کوین وقتی امتیاز بالا باشد
+            if (gameData.score > 100000) {
+                bitcoin.classList.add('auto-rotate');
+            } else {
+                bitcoin.classList.remove('auto-rotate');
+            }
+        }
+        
+        // قالب‌بندی اعداد با جداکننده هزارگان
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        
+        // ایجاد افکت کلیک
+        function createClickEffect(x, y) {
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.style.left = `${x}px`;
+            effect.style.top = `${y}px`;
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.remove();
+            }, 600);
+        }
+        
+        // ایجاد ذرات طلا
+        function createParticles(x, y, count) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // موقعیت تصادفی برای ذرات
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 100;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+        
+        // نمایش افکت دلار واقعی 💵
+        function showDollarEffect(x, y, amount) {
+            const dollarEffect = document.createElement('div');
+            dollarEffect.className = 'dollar-effect';
+            dollarEffect.innerHTML = '💵'; // استفاده از ایموجی دلار واقعی
+            dollarEffect.style.left = `${x - 30}px`;
+            dollarEffect.style.top = `${y - 30}px`;
+            
+            // اضافه کردن متن مقدار در کنار ایموجی
+            const amountText = document.createElement('div');
+            amountText.textContent = `+${formatNumber(amount)}`;
+            amountText.style.position = 'absolute';
+            amountText.style.left = '40px';
+            amountText.style.top = '15px';
+            amountText.style.fontSize = '1.5rem';
+            amountText.style.color = '#4CAF50';
+            amountText.style.textShadow = '0 0 10px rgba(76, 175, 80, 0.8)';
+            
+            dollarEffect.appendChild(amountText);
+            document.body.appendChild(dollarEffect);
+            
+            setTimeout(() => {
+                dollarEffect.remove();
+            }, 1500);
+        }
+        
+        // ارتقای قدرت کلیک
+        function upgradeClickPower() {
+            if (gameData.score >= gameData.nextUpgradeCost) {
+                gameData.score -= gameData.nextUpgradeCost;
+                gameData.clickPower = Math.floor(gameData.clickPower * 1.5);
+                gameData.upgradeLevel++;
+                
+                calculateNextUpgradeCost();
+                saveGameData();
+                updateUI();
+                
+                // افکت ویژه برای ارتقا
+                createParticles(bitcoin.offsetLeft + bitcoin.offsetWidth/2, 
+                               bitcoin.offsetTop + bitcoin.offsetHeight/2, 20);
+                
+                // لرزش بیت‌کوین
+                bitcoin.classList.add('vibration');
+                setTimeout(() => {
+                    bitcoin.classList.remove('vibration');
+                }, 300);
+                
+                // پخش صدا برای ارتقا
+                if (soundEnabled) {
+                    playClickSound();
+                }
+            }
+        }
+        
+        // کلیک روی بیت کوین
+        function handleBitcoinClick(e) {
+            // جلوگیری از کلیک‌های سریع پشت سر هم
+            if (bitcoin.classList.contains('vibration')) return;
+            
+            const rect = bitcoin.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const globalX = e.clientX;
+            const globalY = e.clientY;
+            
+            createClickEffect(globalX, globalY);
+            createParticles(globalX, globalY, 5);
+            showDollarEffect(globalX, globalY, gameData.clickPower);
+            
+            gameData.score += gameData.clickPower;
+            gameData.lastUpdate = Date.now();
+            
+            saveGameData();
+            updateUI();
+            
+            // افکت کلیک روی بیت‌کوین
+            bitcoin.classList.add('vibration');
+            setTimeout(() => {
+                bitcoin.classList.remove('vibration');
+            }, 100);
+            
+            // پخش صدای کلیک
+            playClickSound();
+            
+            // نشانگر لمسی برای دستگاه‌های لمسی
+            if (isTouchDevice()) {
+                showTouchIndicator(globalX, globalY);
+            }
+        }
+        
+        // مدیریت رویدادهای لمسی
+        function setupTouchEvents() {
+            if (isTouchDevice()) {
+                // جلوگیری از زوم با دبل تاپ
+                bitcoin.addEventListener('touchstart', function(e) {
+                    if (e.touches.length > 1) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                // جلوگیری از اسکرول هنگام تاچ
+                document.body.addEventListener('touchmove', function(e) {
+                    if (e.target === bitcoin || bitcoin.contains(e.target)) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            }
+        }
+        
+        // راه‌اندازی بازی
+        function initGame() {
+            createStars();
+            loadGameData();
+            loadSoundSetting();
+            setupTouchEvents();
+            
+            // اضافه کردن event listeners
+            bitcoin.addEventListener('click', handleBitcoinClick);
+            bitcoin.addEventListener('touchend', handleBitcoinClick);
+            upgradeBtn.addEventListener('click', upgradeClickPower);
+            soundToggle.addEventListener('click', toggleSound);
+            
+            // ذخیره خودکار هر 5 ثانیه
+            setInterval(saveGameData, 5000);
+            
+            // ذخیره هنگام بسته شدن صفحه
+            window.addEventListener('beforeunload', saveGameData);
+            
+            // نمایش راهنمای لمسی در دستگاه‌های لمسی
+            if (isTouchDevice()) {
+                setTimeout(() => {
+                    const rect = bitcoin.getBoundingClientRect();
+                    showTouchIndicator(rect.left + rect.width/2, rect.top + rect.height/2);
+                }, 1000);
+            }
+            
+            // راه‌اندازی صداها پس از اولین تعامل کاربر
+            document.addEventListener('click', function initAudio() {
+                initSounds();
+                document.removeEventListener('click', initAudio);
+            }, { once: true });
+        }
+        
+        // شروع بازی هنگامی که DOM بارگذاری شد
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
