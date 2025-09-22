@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بیت کوین کلیکر حرفه‌ای</title>
+    <title>Bitcoin Clicker Pro</title>
     <style>
         * {
             margin: 0;
@@ -25,6 +25,7 @@
             overflow: hidden;
             position: relative;
             touch-action: manipulation;
+            padding-bottom: 80px; /* Space for bottom navigation */
         }
         
         .stars {
@@ -76,8 +77,8 @@
         }
         
         .bitcoin-3d {
-            width: 320px; /* بزرگتر شده */
-            height: 320px; /* بزرگتر شده */
+            width: 320px;
+            height: 320px;
             position: relative;
             cursor: pointer;
             margin: 30px 0;
@@ -102,10 +103,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 140px; /* بزرگتر شده */
+            font-size: 140px;
             box-shadow: 
-                0 0 50px rgba(247, 147, 26, 0.8), /* قوی‌تر شده */
-                inset 0 0 40px rgba(255, 215, 0, 0.4); /* قوی‌تر شده */
+                0 0 50px rgba(247, 147, 26, 0.8),
+                inset 0 0 40px rgba(255, 215, 0, 0.4);
         }
         
         .bitcoin-front {
@@ -120,19 +121,19 @@
         
         .bitcoin-symbol {
             color: #ffd700;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6); /* قوی‌تر شده */
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6);
         }
         
         .dollar-effect {
             position: absolute;
-            font-size: 3.5rem; /* بزرگتر شده */
+            font-size: 3.5rem;
             font-weight: bold;
             pointer-events: none;
             opacity: 0;
             z-index: 10;
             animation: floatUp 1.5s ease-out forwards;
-            text-shadow: 0 0 20px rgba(76, 175, 80, 0.9); /* قوی‌تر شده */
-            filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.8)); /* قوی‌تر شده */
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.9);
+            filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.8));
         }
         
         @keyframes floatUp {
@@ -185,7 +186,7 @@
         
         .stats {
             position: absolute;
-            bottom: 20px;
+            bottom: 100px;
             left: 20px;
             background: rgba(0, 0, 0, 0.3);
             padding: 10px 15px;
@@ -196,10 +197,10 @@
         
         .click-effect {
             position: absolute;
-            width: 40px; /* بزرگتر شده */
-            height: 40px; /* بزرگتر شده */
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.9) 0%, transparent 70%); /* قوی‌تر شده */
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.9) 0%, transparent 70%);
             pointer-events: none;
             animation: ripple 0.6s ease-out forwards;
         }
@@ -217,8 +218,8 @@
         
         .particle {
             position: absolute;
-            width: 10px; /* بزرگتر شده */
-            height: 10px; /* بزرگتر شده */
+            width: 10px;
+            height: 10px;
             background-color: #f7931a;
             border-radius: 50%;
             pointer-events: none;
@@ -274,20 +275,156 @@
             cursor: pointer;
             font-size: 1.2rem;
             transition: all 0.3s;
+            z-index: 100;
         }
         
         .sound-toggle:hover {
             background: rgba(255, 255, 255, 0.1);
         }
         
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 20, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            padding: 5px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover {
+            color: #f7931a;
+            background: rgba(247, 147, 26, 0.1);
+        }
+        
+        .nav-item.active {
+            color: #f7931a;
+        }
+        
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #f7931a;
+        }
+        
+        .modal p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .wallet-address {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .wallet-address:hover {
+            background: rgba(247, 147, 26, 0.1);
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #f7931a, #ff9800);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(247, 147, 26, 0.4);
+        }
+        
+        .close-modal {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .referral-link {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 600px) {
             .bitcoin-3d {
-                width: 260px; /* تنظیم برای موبایل */
-                height: 260px; /* تنظیم برای موبایل */
+                width: 260px;
+                height: 260px;
             }
             
             .bitcoin-front, .bitcoin-back {
-                font-size: 110px; /* تنظیم برای موبایل */
+                font-size: 110px;
             }
             
             .score-display {
@@ -295,24 +432,24 @@
             }
             
             .dollar-effect {
-                font-size: 2.8rem; /* تنظیم برای موبایل */
+                font-size: 2.8rem;
+            }
+            
+            .stats {
+                bottom: 90px;
+                left: 10px;
+                font-size: 0.8rem;
             }
         }
         
         @media (max-width: 400px) {
             .bitcoin-3d {
-                width: 220px; /* تنظیم برای موبایل کوچک */
-                height: 220px; /* تنظیم برای موبایل کوچک */
+                width: 220px;
+                height: 220px;
             }
             
             .bitcoin-front, .bitcoin-back {
-                font-size: 90px; /* تنظیم برای موبایل کوچک */
-            }
-            
-            .stats {
-                bottom: 10px;
-                left: 10px;
-                font-size: 0.8rem;
+                font-size: 90px;
             }
             
             .sound-toggle {
@@ -322,9 +459,21 @@
                 height: 35px;
                 font-size: 1rem;
             }
+            
+            .bottom-nav {
+                padding: 10px 0;
+            }
+            
+            .nav-item {
+                padding: 5px 10px;
+                font-size: 0.7rem;
+            }
+            
+            .nav-icon {
+                font-size: 1.2rem;
+            }
         }
         
-        /* استایل برای حالت لمسی */
         .touch-indicator {
             position: absolute;
             width: 60px;
@@ -350,6 +499,25 @@
                 opacity: 0.7;
             }
         }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            z-index: 3000;
+            animation: slideDown 0.3s ease-out;
+            display: none;
+        }
+        
+        @keyframes slideDown {
+            from { top: -50px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -370,17 +538,71 @@
         </div>
         
         <div class="upgrade-container">
-            <button class="upgrade-btn" id="upgrade-btn">ارتقا قدرت کلیک (۱۰,۰۰۰ سکه)</button>
+            <button class="upgrade-btn" id="upgrade-btn">Upgrade Click Power (10,000 coins)</button>
         </div>
     </div>
     
     <div class="stats">
-        <div>قدرت کلیک: <span id="click-power">1</span></div>
-        <div>سطح ارتقا: <span id="upgrade-level">1</span></div>
+        <div>Click Power: <span id="click-power">1</span></div>
+        <div>Upgrade Level: <span id="upgrade-level">1</span></div>
     </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item" id="donate-btn">
+            <div class="nav-icon">❤️</div>
+            <span>Donate</span>
+        </div>
+        <div class="nav-item" id="ads-btn">
+            <div class="nav-icon">📢</div>
+            <span>Ads</span>
+        </div>
+        <div class="nav-item" id="referral-btn">
+            <div class="nav-icon">👥</div>
+            <span>Referral</span>
+        </div>
+    </div>
+    
+    <!-- Donate Modal -->
+    <div class="modal" id="donate-modal">
+        <div class="modal-content">
+            <h2>Support Development</h2>
+            <p>If you enjoy this game and would like to support its development, you can make a voluntary donation. Every contribution helps!</p>
+            
+            <div class="wallet-address" id="wallet-address">
+                TV61aTh98MGqmteYzda5AaBzdXgGqreG6A
+            </div>
+            
+            <button class="copy-btn" id="copy-wallet">Copy Address</button>
+            <p class="small">TRC20 Wallet Address</p>
+            
+            <button class="close-modal" id="close-donate">Close</button>
+        </div>
+    </div>
+    
+    <!-- Referral Modal -->
+    <div class="modal" id="referral-modal">
+        <div class="modal-content">
+            <h2>Referral Program</h2>
+            <p>Invite friends and earn 1,000 coins for each referral!</p>
+            <p>Your unique referral link:</p>
+            
+            <div class="referral-link" id="referral-link">
+                https://mbuiop.github.io/python-app.py/?ref=<span id="user-id">loading...</span>
+            </div>
+            
+            <button class="copy-btn" id="copy-referral">Copy Link</button>
+            <p>Referrals: <span id="referral-count">0</span></p>
+            
+            <button class="close-modal" id="close-referral">Close</button>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">Copied to clipboard!</div>
 
     <script>
-        // ایجاد ستاره‌های پس‌زمینه
+        // Create background stars
         function createStars() {
             const starsContainer = document.getElementById('stars');
             const starCount = 150;
@@ -402,12 +624,12 @@
             }
         }
         
-        // بررسی دستگاه لمسی
+        // Check if device is touchscreen
         function isTouchDevice() {
             return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         }
         
-        // نشانگر لمسی
+        // Touch indicator
         function showTouchIndicator(x, y) {
             if (!isTouchDevice()) return;
             
@@ -421,12 +643,12 @@
             }, 2000);
         }
         
-        // مدیریت صدا
+        // Sound management
         let soundEnabled = true;
         const clickSounds = [];
         
         function initSounds() {
-            // ایجاد چندین صدا برای تنوع
+            // Create multiple sounds for variety
             for (let i = 0; i < 3; i++) {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
@@ -436,7 +658,7 @@
                 gainNode.connect(audioContext.destination);
                 
                 oscillator.type = 'sine';
-                oscillator.frequency.value = 800 + (i * 100); // فرکانس‌های مختلف
+                oscillator.frequency.value = 800 + (i * 100); // Different frequencies
                 
                 gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
@@ -455,7 +677,7 @@
                 const randomSound = clickSounds[Math.floor(Math.random() * clickSounds.length)];
                 const audioContext = randomSound.audioContext;
                 
-                // اگر audioContext suspend شده باشد، resume کنیم
+                // Resume audioContext if suspended
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
@@ -477,7 +699,7 @@
                 oscillator.stop(now + 0.1);
                 
             } catch (error) {
-                console.log('خطا در پخش صدا:', error);
+                console.log('Sound error:', error);
             }
         }
         
@@ -486,7 +708,7 @@
             const soundToggle = document.getElementById('sound-toggle');
             soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
             
-            // ذخیره وضعیت صدا
+            // Save sound setting
             localStorage.setItem('bitcoinClickerSound', soundEnabled.toString());
         }
         
@@ -499,7 +721,63 @@
             soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
         }
         
-        // عناصر DOM
+        // Generate unique user ID
+        function generateUserId() {
+            let userId = localStorage.getItem('bitcoinClickerUserId');
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+                localStorage.setItem('bitcoinClickerUserId', userId);
+            }
+            return userId;
+        }
+        
+        // Get referral count
+        function getReferralCount() {
+            return parseInt(localStorage.getItem('bitcoinClickerReferrals') || '0');
+        }
+        
+        // Add referral
+        function addReferral() {
+            const currentCount = getReferralCount();
+            localStorage.setItem('bitcoinClickerReferrals', (currentCount + 1).toString());
+            return currentCount + 1;
+        }
+        
+        // Check for referral from URL
+        function checkForReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ref = urlParams.get('ref');
+            
+            if (ref) {
+                const myId = generateUserId();
+                if (ref !== myId) {
+                    // Add coins for referral
+                    const gameData = loadGameData();
+                    gameData.score += 1000;
+                    saveGameData(gameData);
+                    updateUI();
+                    
+                    // Update referral count
+                    addReferral();
+                    
+                    // Show notification
+                    showNotification('+1,000 coins for referral!');
+                }
+            }
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // DOM elements
         const bitcoin = document.getElementById('bitcoin');
         const scoreElement = document.getElementById('score');
         const upgradeBtn = document.getElementById('upgrade-btn');
@@ -507,7 +785,22 @@
         const upgradeLevelElement = document.getElementById('upgrade-level');
         const soundToggle = document.getElementById('sound-toggle');
         
-        // داده‌های بازی
+        // Modal elements
+        const donateModal = document.getElementById('donate-modal');
+        const referralModal = document.getElementById('referral-modal');
+        const donateBtn = document.getElementById('donate-btn');
+        const adsBtn = document.getElementById('ads-btn');
+        const referralBtn = document.getElementById('referral-btn');
+        const closeDonate = document.getElementById('close-donate');
+        const closeReferral = document.getElementById('close-referral');
+        const copyWallet = document.getElementById('copy-wallet');
+        const copyReferral = document.getElementById('copy-referral');
+        const walletAddress = document.getElementById('wallet-address');
+        const referralLink = document.getElementById('referral-link');
+        const userIdElement = document.getElementById('user-id');
+        const referralCountElement = document.getElementById('referral-count');
+        
+        // Game data
         let gameData = {
             score: 0,
             clickPower: 1,
@@ -516,54 +809,57 @@
             lastUpdate: Date.now()
         };
         
-        // بارگذاری داده‌ها از localStorage
+        // Load game data from localStorage
         function loadGameData() {
             const savedData = localStorage.getItem('bitcoinClickerProData');
             if (savedData) {
                 const parsedData = JSON.parse(savedData);
                 gameData = { ...gameData, ...parsedData };
                 
-                // محاسبه هزینه ارتقای بعدی
+                // Calculate next upgrade cost
                 calculateNextUpgradeCost();
             }
-            updateUI();
+            return gameData;
         }
         
-        // ذخیره داده‌ها در localStorage
-        function saveGameData() {
-            localStorage.setItem('bitcoinClickerProData', JSON.stringify(gameData));
+        // Save game data to localStorage
+        function saveGameData(data = gameData) {
+            localStorage.setItem('bitcoinClickerProData', JSON.stringify(data));
         }
         
-        // محاسبه هزینه ارتقای بعدی
+        // Calculate next upgrade cost
         function calculateNextUpgradeCost() {
-            // هزینه ارتقا به صورت تصاعدی افزایش می‌یابد
+            // Upgrade cost increases exponentially
             gameData.nextUpgradeCost = Math.floor(10000 * Math.pow(1.5, gameData.upgradeLevel - 1));
         }
         
-        // به‌روزرسانی UI
+        // Update UI
         function updateUI() {
             scoreElement.textContent = formatNumber(gameData.score) + " BTC";
             clickPowerElement.textContent = formatNumber(gameData.clickPower);
             upgradeLevelElement.textContent = gameData.upgradeLevel;
             
-            // به‌روزرسانی متن دکمه ارتقا
-            upgradeBtn.textContent = `ارتقا قدرت کلیک (${formatNumber(gameData.nextUpgradeCost)} سکه)`;
+            // Update upgrade button text
+            upgradeBtn.textContent = `Upgrade Click Power (${formatNumber(gameData.nextUpgradeCost)} coins)`;
             upgradeBtn.disabled = gameData.score < gameData.nextUpgradeCost;
             
-            // چرخش خودکار بیت‌کوین وقتی امتیاز بالا باشد
+            // Auto-rotate bitcoin when score is high
             if (gameData.score > 100000) {
                 bitcoin.classList.add('auto-rotate');
             } else {
                 bitcoin.classList.remove('auto-rotate');
             }
+            
+            // Update referral count
+            referralCountElement.textContent = getReferralCount();
         }
         
-        // قالب‌بندی اعداد با جداکننده هزارگان
+        // Format numbers with thousands separators
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
         
-        // ایجاد افکت کلیک
+        // Create click effect
         function createClickEffect(x, y) {
             const effect = document.createElement('div');
             effect.className = 'click-effect';
@@ -576,13 +872,13 @@
             }, 600);
         }
         
-        // ایجاد ذرات طلا
+        // Create gold particles
         function createParticles(x, y, count) {
             for (let i = 0; i < count; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
                 
-                // موقعیت تصادفی برای ذرات
+                // Random position for particles
                 const angle = Math.random() * Math.PI * 2;
                 const distance = 50 + Math.random() * 100;
                 const tx = Math.cos(angle) * distance;
@@ -602,15 +898,15 @@
             }
         }
         
-        // نمایش افکت دلار واقعی 💵
+        // Show dollar effect
         function showDollarEffect(x, y, amount) {
             const dollarEffect = document.createElement('div');
             dollarEffect.className = 'dollar-effect';
-            dollarEffect.innerHTML = '💵'; // استفاده از ایموجی دلار واقعی
+            dollarEffect.innerHTML = '💵'; // Use real dollar emoji
             dollarEffect.style.left = `${x - 30}px`;
             dollarEffect.style.top = `${y - 30}px`;
             
-            // اضافه کردن متن مقدار در کنار ایموجی
+            // Add amount text next to emoji
             const amountText = document.createElement('div');
             amountText.textContent = `+${formatNumber(amount)}`;
             amountText.style.position = 'absolute';
@@ -628,7 +924,7 @@
             }, 1500);
         }
         
-        // ارتقای قدرت کلیک
+        // Upgrade click power
         function upgradeClickPower() {
             if (gameData.score >= gameData.nextUpgradeCost) {
                 gameData.score -= gameData.nextUpgradeCost;
@@ -639,26 +935,26 @@
                 saveGameData();
                 updateUI();
                 
-                // افکت ویژه برای ارتقا
+                // Special effect for upgrade
                 createParticles(bitcoin.offsetLeft + bitcoin.offsetWidth/2, 
                                bitcoin.offsetTop + bitcoin.offsetHeight/2, 20);
                 
-                // لرزش بیت‌کوین
+                // Bitcoin vibration
                 bitcoin.classList.add('vibration');
                 setTimeout(() => {
                     bitcoin.classList.remove('vibration');
                 }, 300);
                 
-                // پخش صدا برای ارتقا
+                // Play sound for upgrade
                 if (soundEnabled) {
                     playClickSound();
                 }
             }
         }
         
-        // کلیک روی بیت کوین
+        // Click on bitcoin
         function handleBitcoinClick(e) {
-            // جلوگیری از کلیک‌های سریع پشت سر هم
+            // Prevent rapid consecutive clicks
             if (bitcoin.classList.contains('vibration')) return;
             
             const rect = bitcoin.getBoundingClientRect();
@@ -677,32 +973,32 @@
             saveGameData();
             updateUI();
             
-            // افکت کلیک روی بیت‌کوین
+            // Click effect on bitcoin
             bitcoin.classList.add('vibration');
             setTimeout(() => {
                 bitcoin.classList.remove('vibration');
             }, 100);
             
-            // پخش صدای کلیک
+            // Play click sound
             playClickSound();
             
-            // نشانگر لمسی برای دستگاه‌های لمسی
+            // Touch indicator for touch devices
             if (isTouchDevice()) {
                 showTouchIndicator(globalX, globalY);
             }
         }
         
-        // مدیریت رویدادهای لمسی
+        // Setup touch events
         function setupTouchEvents() {
             if (isTouchDevice()) {
-                // جلوگیری از زوم با دبل تاپ
+                // Prevent zoom with double tap
                 bitcoin.addEventListener('touchstart', function(e) {
                     if (e.touches.length > 1) {
                         e.preventDefault();
                     }
                 }, { passive: false });
                 
-                // جلوگیری از اسکرول هنگام تاچ
+                // Prevent scrolling when touching
                 document.body.addEventListener('touchmove', function(e) {
                     if (e.target === bitcoin || bitcoin.contains(e.target)) {
                         e.preventDefault();
@@ -711,26 +1007,87 @@
             }
         }
         
-        // راه‌اندازی بازی
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('Copied to clipboard!');
+            });
+        }
+        
+        // Initialize the game
         function initGame() {
             createStars();
             loadGameData();
             loadSoundSetting();
             setupTouchEvents();
+            checkForReferral();
             
-            // اضافه کردن event listeners
+            // Generate user ID and set referral link
+            const userId = generateUserId();
+            userIdElement.textContent = userId;
+            
+            // Add event listeners
             bitcoin.addEventListener('click', handleBitcoinClick);
             bitcoin.addEventListener('touchend', handleBitcoinClick);
             upgradeBtn.addEventListener('click', upgradeClickPower);
             soundToggle.addEventListener('click', toggleSound);
             
-            // ذخیره خودکار هر 5 ثانیه
-            setInterval(saveGameData, 5000);
+            // Modal event listeners
+            donateBtn.addEventListener('click', () => {
+                donateModal.style.display = 'flex';
+            });
             
-            // ذخیره هنگام بسته شدن صفحه
-            window.addEventListener('beforeunload', saveGameData);
+            adsBtn.addEventListener('click', () => {
+                window.location.href = 'm.html';
+            });
             
-            // نمایش راهنمای لمسی در دستگاه‌های لمسی
+            referralBtn.addEventListener('click', () => {
+                referralModal.style.display = 'flex';
+            });
+            
+            closeDonate.addEventListener('click', () => {
+                donateModal.style.display = 'none';
+            });
+            
+            closeReferral.addEventListener('click', () => {
+                referralModal.style.display = 'none';
+            });
+            
+            copyWallet.addEventListener('click', () => {
+                copyToClipboard(walletAddress.textContent);
+            });
+            
+            copyReferral.addEventListener('click', () => {
+                copyToClipboard(referralLink.textContent);
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === donateModal) {
+                    donateModal.style.display = 'none';
+                }
+                if (e.target === referralModal) {
+                    referralModal.style.display = 'none';
+                }
+            });
+            
+            // Auto-save every 5 seconds
+            setInterval(() => saveGameData(), 5000);
+            
+            // Save when page is closed
+            window.addEventListener('beforeunload', () => saveGameData());
+            
+            // Show touch guide on touch devices
             if (isTouchDevice()) {
                 setTimeout(() => {
                     const rect = bitcoin.getBoundingClientRect();
@@ -738,14 +1095,17 @@
                 }, 1000);
             }
             
-            // راه‌اندازی صداها پس از اولین تعامل کاربر
+            // Initialize sounds after first user interaction
             document.addEventListener('click', function initAudio() {
                 initSounds();
                 document.removeEventListener('click', initAudio);
             }, { once: true });
+            
+            // Initial UI update
+            updateUI();
         }
         
-        // شروع بازی هنگامی که DOM بارگذاری شد
+        // Start the game when DOM is loaded
         document.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
