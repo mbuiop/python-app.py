@@ -301,6 +301,33 @@
             margin-bottom: 5px;
         }
         
+        /* Music Indicator */
+        .music-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .music-indicator.playing .music-pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        .music-pulse {
+            width: 10px;
+            height: 10px;
+            background: #f7931a;
+            border-radius: 50%;
+        }
+        
         /* Modal Styles */
         .modal {
             display: none;
@@ -466,6 +493,12 @@
                 right: 10px;
                 font-size: 0.8rem;
             }
+            
+            .music-indicator {
+                top: 10px;
+                left: 10px;
+                font-size: 0.7rem;
+            }
         }
         
         @media (max-width: 400px) {
@@ -536,11 +569,22 @@
             from { top: -50px; opacity: 0; }
             to { top: 20px; opacity: 1; }
         }
+        
+        /* Hidden audio element */
+        #background-audio {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
     <div class="touch-indicator" id="touch-indicator"></div>
+    
+    <!-- Music Indicator -->
+    <div class="music-indicator" id="music-indicator">
+        <div class="music-pulse"></div>
+        <span id="current-song-name">آهنگ: -</span>
+    </div>
     
     <div class="container">
         <div class="score-display" id="score">۰ MON</div>
@@ -563,6 +607,9 @@
         <div>قدرت کلیک: <span id="click-power">۱</span></div>
         <div>سطح ارتقا: <span id="upgrade-level">۱</span></div>
     </div>
+    
+    <!-- Hidden Audio Element for Background Playback -->
+    <audio id="background-audio"></audio>
     
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
@@ -600,21 +647,17 @@
             <p>لیست آهنگ‌های موجود:</p>
             
             <div class="music-player">
-                <audio id="audio-player" controls style="width: 100%; margin-bottom: 15px;">
-                    مرورگر شما از پخش آهنگ پشتیبانی نمی‌کند.
-                </audio>
-                
                 <div class="song-list">
-                    <div class="song-item" data-src="m1.mp3">آهنگ ۱</div>
-                    <div class="song-item" data-src="m2.mp3">آهنگ ۲</div>
-                    <div class="song-item" data-src="m3.mp3">آهنگ ۳</div>
-                    <div class="song-item" data-src="m4.mp3">آهنگ ۴</div>
-                    <div class="song-item" data-src="m5.mp3">آهنگ ۵</div>
-                    <div class="song-item" data-src="m6.mp3">آهنگ ۶</div>
-                    <div class="song-item" data-src="m7.mp3">آهنگ ۷</div>
-                    <div class="song-item" data-src="m8.mp3">آهنگ ۸</div>
-                    <div class="song-item" data-src="m9.mp3">آهنگ ۹</div>
-                    <div class="song-item" data-src="m10.mp3">آهنگ ۱۰</div>
+                    <div class="song-item" data-src="m1.mp3" data-name="آهنگ ۱">آهنگ ۱</div>
+                    <div class="song-item" data-src="m2.mp3" data-name="آهنگ ۲">آهنگ ۲</div>
+                    <div class="song-item" data-src="m3.mp3" data-name="آهنگ ۳">آهنگ ۳</div>
+                    <div class="song-item" data-src="m4.mp3" data-name="آهنگ ۴">آهنگ ۴</div>
+                    <div class="song-item" data-src="m5.mp3" data-name="آهنگ ۵">آهنگ ۵</div>
+                    <div class="song-item" data-src="m6.mp3" data-name="آهنگ ۶">آهنگ ۶</div>
+                    <div class="song-item" data-src="m7.mp3" data-name="آهنگ ۷">آهنگ ۷</div>
+                    <div class="song-item" data-src="m8.mp3" data-name="آهنگ ۸">آهنگ ۸</div>
+                    <div class="song-item" data-src="m9.mp3" data-name="آهنگ ۹">آهنگ ۹</div>
+                    <div class="song-item" data-src="m10.mp3" data-name="آهنگ ۱۰">آهنگ ۱۰</div>
                 </div>
                 
                 <div class="music-controls">
@@ -622,6 +665,11 @@
                     <button class="music-btn" id="play-btn">▶️</button>
                     <button class="music-btn" id="pause-btn">⏸</button>
                     <button class="music-btn" id="next-btn">⏭</button>
+                    <button class="music-btn" id="stop-btn">⏹</button>
+                </div>
+                
+                <div style="margin-top: 15px; font-size: 0.9rem; color: #aaa;">
+                    آهنگ در پس‌زمینه ادامه می‌یابد
                 </div>
             </div>
             
@@ -691,6 +739,8 @@
         const upgradeBtn = document.getElementById('upgrade-btn');
         const clickPowerElement = document.getElementById('click-power');
         const upgradeLevelElement = document.getElementById('upgrade-level');
+        const musicIndicator = document.getElementById('music-indicator');
+        const currentSongName = document.getElementById('current-song-name');
         
         // عناصر مودال
         const donateModal = document.getElementById('donate-modal');
@@ -703,11 +753,12 @@
         const walletAddress = document.getElementById('wallet-address');
         
         // عناصر پخش آهنگ
-        const audioPlayer = document.getElementById('audio-player');
+        const backgroundAudio = document.getElementById('background-audio');
         const playBtn = document.getElementById('play-btn');
         const pauseBtn = document.getElementById('pause-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
+        const stopBtn = document.getElementById('stop-btn');
         const songItems = document.querySelectorAll('.song-item');
         
         // داده‌های بازی
@@ -932,7 +983,10 @@
             if (index >= 0 && index < songItems.length) {
                 currentSongIndex = index;
                 const songSrc = songItems[index].getAttribute('data-src');
-                audioPlayer.src = songSrc;
+                const songName = songItems[index].getAttribute('data-name');
+                
+                backgroundAudio.src = songSrc;
+                currentSongName.textContent = `آهنگ: ${songName}`;
                 
                 // به‌روزرسانی وضعیت آهنگ فعال
                 songItems.forEach((item, i) => {
@@ -946,13 +1000,28 @@
         }
         
         function playSong() {
-            audioPlayer.play();
-            isPlaying = true;
+            backgroundAudio.play().then(() => {
+                isPlaying = true;
+                musicIndicator.classList.add('playing');
+                updateMusicControls();
+            }).catch(error => {
+                console.log('خطا در پخش آهنگ:', error);
+            });
         }
         
         function pauseSong() {
-            audioPlayer.pause();
+            backgroundAudio.pause();
             isPlaying = false;
+            musicIndicator.classList.remove('playing');
+            updateMusicControls();
+        }
+        
+        function stopSong() {
+            backgroundAudio.pause();
+            backgroundAudio.currentTime = 0;
+            isPlaying = false;
+            musicIndicator.classList.remove('playing');
+            updateMusicControls();
         }
         
         function nextSong() {
@@ -977,6 +1046,16 @@
             }
         }
         
+        function updateMusicControls() {
+            if (isPlaying) {
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'flex';
+            } else {
+                playBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
+            }
+        }
+        
         // راه‌اندازی بازی
         function initGame() {
             createStars();
@@ -995,8 +1074,8 @@
             
             musicBtn.addEventListener('click', () => {
                 musicModal.style.display = 'flex';
-                // بارگذاری اولین آهنگ
-                if (audioPlayer.src === '') {
+                // بارگذاری اولین آهنگ اگر قبلاً بارگذاری نشده
+                if (backgroundAudio.src === '') {
                     loadSong(0);
                 }
             });
@@ -1007,7 +1086,7 @@
             
             closeMusic.addEventListener('click', () => {
                 musicModal.style.display = 'none';
-                pauseSong();
+                // آهنگ در پس‌زمینه ادامه می‌یابد - قطع نمی‌شود
             });
             
             copyWallet.addEventListener('click', () => {
@@ -1017,6 +1096,7 @@
             // event listeners پخش آهنگ
             playBtn.addEventListener('click', playSong);
             pauseBtn.addEventListener('click', pauseSong);
+            stopBtn.addEventListener('click', stopSong);
             nextBtn.addEventListener('click', nextSong);
             prevBtn.addEventListener('click', prevSong);
             
@@ -1029,7 +1109,20 @@
             });
             
             // پخش خودکار آهنگ بعدی
-            audioPlayer.addEventListener('ended', nextSong);
+            backgroundAudio.addEventListener('ended', nextSong);
+            
+            // به‌روزرسانی وضعیت پخش
+            backgroundAudio.addEventListener('play', () => {
+                isPlaying = true;
+                musicIndicator.classList.add('playing');
+                updateMusicControls();
+            });
+            
+            backgroundAudio.addEventListener('pause', () => {
+                isPlaying = false;
+                musicIndicator.classList.remove('playing');
+                updateMusicControls();
+            });
             
             // بستن مودال با کلیک خارج
             window.addEventListener('click', (e) => {
@@ -1038,7 +1131,7 @@
                 }
                 if (e.target === musicModal) {
                     musicModal.style.display = 'none';
-                    pauseSong();
+                    // آهنگ در پس‌زمینه ادامه می‌یابد
                 }
             });
             
@@ -1058,6 +1151,7 @@
             
             // به‌روزرسانی اولیه UI
             updateUI();
+            updateMusicControls();
         }
         
         // شروع بازی هنگامی که DOM بارگذاری شد
