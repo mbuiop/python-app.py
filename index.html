@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>کلیکر MON حرفه‌ای</title>
+    <title>کلیکر AI حرفه‌ای</title>
     <style>
         * {
             margin: 0;
@@ -62,8 +62,8 @@
             font-size: 2.8rem;
             font-weight: bold;
             margin-bottom: 30px;
-            text-shadow: 0 0 15px rgba(247, 147, 26, 0.8);
-            background: linear-gradient(45deg, #f7931a, #ffd700);
+            text-shadow: 0 0 15px rgba(99, 102, 241, 0.8);
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -76,7 +76,7 @@
             50% { transform: scale(1.05); }
         }
         
-        .bitcoin-3d {
+        .ai-chip-3d {
             width: 320px;
             height: 320px;
             position: relative;
@@ -86,18 +86,18 @@
             transition: transform 0.3s;
         }
         
-        .bitcoin-3d:hover {
+        .ai-chip-3d:hover {
             transform: scale(1.05) rotateY(5deg);
         }
         
-        .bitcoin-3d:active {
+        .ai-chip-3d:active {
             transform: scale(0.95) rotateY(-5deg);
         }
         
-        .bitcoin-front, .bitcoin-back {
+        .ai-chip-front, .ai-chip-back {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
+            border-radius: 20px;
             position: absolute;
             backface-visibility: hidden;
             display: flex;
@@ -105,23 +105,53 @@
             justify-content: center;
             font-size: 140px;
             box-shadow: 
-                0 0 50px rgba(247, 147, 26, 0.8),
-                inset 0 0 40px rgba(255, 215, 0, 0.4);
+                0 0 50px rgba(99, 102, 241, 0.8),
+                inset 0 0 40px rgba(139, 92, 246, 0.4);
         }
         
-        .bitcoin-front {
-            background: radial-gradient(circle at 30% 30%, #f7931a, #b36200);
+        .ai-chip-front {
+            background: radial-gradient(circle at 30% 30%, #6366f1, #4338ca);
             transform: rotateY(0deg);
         }
         
-        .bitcoin-back {
-            background: radial-gradient(circle at 70% 30%, #f7931a, #b36200);
+        .ai-chip-back {
+            background: radial-gradient(circle at 70% 30%, #6366f1, #4338ca);
             transform: rotateY(180deg);
         }
         
-        .bitcoin-symbol {
-            color: #ffd700;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6);
+        .ai-chip-image {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 25%, #45b7d1 50%, #96ceb4 75%, #ffeaa7 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-chip-image::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            z-index: 1;
+        }
+        
+        .ai-chip-image::after {
+            content: 'AI';
+            position: absolute;
+            z-index: 2;
+            font-size: 80px;
+            font-weight: bold;
+            color: #8b5cf6;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Arial Black', sans-serif;
         }
         
         .dollar-effect {
@@ -154,7 +184,7 @@
         }
         
         .upgrade-btn {
-            background: linear-gradient(45deg, #f7931a, #ff9800);
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
             border: none;
             color: white;
             padding: 15px 30px;
@@ -162,7 +192,7 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(247, 147, 26, 0.5);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.5);
             font-weight: bold;
             width: 100%;
             max-width: 300px;
@@ -170,7 +200,7 @@
         
         .upgrade-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(247, 147, 26, 0.7);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.7);
         }
         
         .upgrade-btn:active {
@@ -200,7 +230,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.9) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.9) 0%, transparent 70%);
             pointer-events: none;
             animation: ripple 0.6s ease-out forwards;
         }
@@ -220,7 +250,7 @@
             position: absolute;
             width: 10px;
             height: 10px;
-            background-color: #f7931a;
+            background-color: #6366f1;
             border-radius: 50%;
             pointer-events: none;
             animation: particleFloat 1s ease-out forwards;
@@ -288,12 +318,12 @@
         }
         
         .nav-item:hover {
-            color: #f7931a;
-            background: rgba(247, 147, 26, 0.1);
+            color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
         }
         
         .nav-item.active {
-            color: #f7931a;
+            color: #6366f1;
         }
         
         .nav-icon {
@@ -324,7 +354,7 @@
         .music-pulse {
             width: 10px;
             height: 10px;
-            background: #f7931a;
+            background: #6366f1;
             border-radius: 50%;
         }
         
@@ -355,7 +385,7 @@
         
         .modal h2 {
             margin-bottom: 20px;
-            color: #f7931a;
+            color: #6366f1;
         }
         
         .modal p {
@@ -376,11 +406,11 @@
         }
         
         .wallet-address:hover {
-            background: rgba(247, 147, 26, 0.1);
+            background: rgba(99, 102, 241, 0.1);
         }
         
         .copy-btn {
-            background: linear-gradient(45deg, #f7931a, #ff9800);
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
             border: none;
             color: white;
             padding: 10px 20px;
@@ -393,7 +423,7 @@
         
         .copy-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(247, 147, 26, 0.4);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
         }
         
         .close-modal {
@@ -444,7 +474,7 @@
         }
         
         .music-btn:hover {
-            background: rgba(247, 147, 26, 0.3);
+            background: rgba(99, 102, 241, 0.3);
         }
         
         .song-list {
@@ -463,21 +493,26 @@
         }
         
         .song-item:hover {
-            background: rgba(247, 147, 26, 0.2);
+            background: rgba(99, 102, 241, 0.2);
         }
         
         .song-item.active {
-            background: rgba(247, 147, 26, 0.4);
+            background: rgba(99, 102, 241, 0.4);
         }
         
         @media (max-width: 600px) {
-            .bitcoin-3d {
+            .ai-chip-3d {
                 width: 260px;
                 height: 260px;
             }
             
-            .bitcoin-front, .bitcoin-back {
-                font-size: 110px;
+            .ai-chip-image {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .ai-chip-image::after {
+                font-size: 60px;
             }
             
             .score-display {
@@ -502,13 +537,18 @@
         }
         
         @media (max-width: 400px) {
-            .bitcoin-3d {
+            .ai-chip-3d {
                 width: 220px;
                 height: 220px;
             }
             
-            .bitcoin-front, .bitcoin-back {
-                font-size: 90px;
+            .ai-chip-image {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .ai-chip-image::after {
+                font-size: 50px;
             }
             
             .bottom-nav {
@@ -530,7 +570,7 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
             pointer-events: none;
             animation: touchPulse 2s infinite;
             display: none;
@@ -587,14 +627,14 @@
     </div>
     
     <div class="container">
-        <div class="score-display" id="score">۰ MON</div>
+        <div class="score-display" id="score">۰ AI</div>
         
-        <div class="bitcoin-3d" id="bitcoin">
-            <div class="bitcoin-front">
-                <span class="bitcoin-symbol">₿</span>
+        <div class="ai-chip-3d" id="ai-chip">
+            <div class="ai-chip-front">
+                <div class="ai-chip-image"></div>
             </div>
-            <div class="bitcoin-back">
-                <span class="bitcoin-symbol">₿</span>
+            <div class="ai-chip-back">
+                <div class="ai-chip-image"></div>
             </div>
         </div>
         
@@ -661,10 +701,10 @@
                 </div>
                 
                 <div class="music-controls">
-                    <button class="music-btn" id="prev-btn">⏮</button>
+                    <button class="music-btn" id="prev-btn">⮪</button>
                     <button class="music-btn" id="play-btn">▶️</button>
                     <button class="music-btn" id="pause-btn">⏸</button>
-                    <button class="music-btn" id="next-btn">⏭</button>
+                    <button class="music-btn" id="next-btn">⮫</button>
                     <button class="music-btn" id="stop-btn">⏹</button>
                 </div>
                 
@@ -734,7 +774,7 @@
         }
         
         // عناصر DOM
-        const bitcoin = document.getElementById('bitcoin');
+        const aiChip = document.getElementById('ai-chip');
         const scoreElement = document.getElementById('score');
         const upgradeBtn = document.getElementById('upgrade-btn');
         const clickPowerElement = document.getElementById('click-power');
@@ -776,7 +816,7 @@
         
         // بارگذاری داده‌های بازی
         function loadGameData() {
-            const savedData = localStorage.getItem('monClickerProData');
+            const savedData = localStorage.getItem('aiClickerProData');
             if (savedData) {
                 const parsedData = JSON.parse(savedData);
                 gameData = { ...gameData, ...parsedData };
@@ -789,7 +829,7 @@
         
         // ذخیره داده‌های بازی
         function saveGameData(data = gameData) {
-            localStorage.setItem('monClickerProData', JSON.stringify(data));
+            localStorage.setItem('aiClickerProData', JSON.stringify(data));
         }
         
         // محاسبه هزینه ارتقای بعدی
@@ -800,7 +840,7 @@
         
         // به‌روزرسانی UI
         function updateUI() {
-            scoreElement.textContent = formatNumber(gameData.score) + " MON";
+            scoreElement.textContent = formatNumber(gameData.score) + " AI";
             clickPowerElement.textContent = formatNumber(gameData.clickPower);
             upgradeLevelElement.textContent = gameData.upgradeLevel;
             
@@ -808,11 +848,11 @@
             upgradeBtn.textContent = `ارتقای قدرت کلیک (${formatNumber(gameData.nextUpgradeCost)} سکه)`;
             upgradeBtn.disabled = gameData.score < gameData.nextUpgradeCost;
             
-            // چرخش خودکار بیت‌کوین وقتی امتیاز بالا باشد
+            // چرخش خودکار چیپ AI وقتی امتیاز بالا باشد
             if (gameData.score > 100000) {
-                bitcoin.classList.add('auto-rotate');
+                aiChip.classList.add('auto-rotate');
             } else {
-                bitcoin.classList.remove('auto-rotate');
+                aiChip.classList.remove('auto-rotate');
             }
         }
         
@@ -898,27 +938,29 @@
                 updateUI();
                 
                 // افکت ویژه برای ارتقا
-                createParticles(bitcoin.offsetLeft + bitcoin.offsetWidth/2, 
-                               bitcoin.offsetTop + bitcoin.offsetHeight/2, 20);
+                createParticles(aiChip.offsetLeft + aiChip.offsetWidth/2, 
+                               aiChip.offsetTop + aiChip.offsetHeight/2, 20);
                 
-                // لرزش بیت‌کوین
-                bitcoin.classList.add('vibration');
+                // لرزش چیپ AI
+                aiChip.classList.add('vibration');
                 setTimeout(() => {
-                    bitcoin.classList.remove('vibration');
+                    aiChip.classList.remove('vibration');
                 }, 300);
             }
         }
         
-        // کلیک روی بیت کوین
-        function handleBitcoinClick(e) {
-            // جلوگیری از کلیک‌های سریع پشت سر هم
-            if (bitcoin.classList.contains('vibration')) return;
+        // کلیک روی چیپ AI
+        function handleAIChipClick(e) {
+            // جلوگیری از پردازش رویداد چندگانه
+            e.preventDefault();
+            e.stopPropagation();
             
-            const rect = bitcoin.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const globalX = e.clientX;
-            const globalY = e.clientY;
+            // جلوگیری از کلیک‌های سریع پشت سر هم
+            if (aiChip.classList.contains('vibration')) return;
+            
+            const rect = aiChip.getBoundingClientRect();
+            const globalX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width/2);
+            const globalY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height/2);
             
             createClickEffect(globalX, globalY);
             createParticles(globalX, globalY, 5);
@@ -930,10 +972,10 @@
             saveGameData();
             updateUI();
             
-            // افکت کلیک روی بیت‌کوین
-            bitcoin.classList.add('vibration');
+            // افکت کلیک روی چیپ AI
+            aiChip.classList.add('vibration');
             setTimeout(() => {
-                bitcoin.classList.remove('vibration');
+                aiChip.classList.remove('vibration');
             }, 100);
             
             // نشانگر لمسی برای دستگاه‌های لمسی
@@ -946,7 +988,7 @@
         function setupTouchEvents() {
             if (isTouchDevice()) {
                 // جلوگیری از زوم با دبل تاپ
-                bitcoin.addEventListener('touchstart', function(e) {
+                aiChip.addEventListener('touchstart', function(e) {
                     if (e.touches.length > 1) {
                         e.preventDefault();
                     }
@@ -954,7 +996,7 @@
                 
                 // جلوگیری از اسکرول هنگام تاچ
                 document.body.addEventListener('touchmove', function(e) {
-                    if (e.target === bitcoin || bitcoin.contains(e.target)) {
+                    if (e.target === aiChip || aiChip.contains(e.target)) {
                         e.preventDefault();
                     }
                 }, { passive: false });
@@ -1063,8 +1105,15 @@
             setupTouchEvents();
             
             // اضافه کردن event listeners
-            bitcoin.addEventListener('click', handleBitcoinClick);
-            bitcoin.addEventListener('touchend', handleBitcoinClick);
+            aiChip.addEventListener('click', handleAIChipClick);
+            aiChip.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                handleAIChipClick(e);
+            }, { passive: false });
+            aiChip.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                handleAIChipClick(e);
+            }, { passive: false });
             upgradeBtn.addEventListener('click', upgradeClickPower);
             
             // event listeners مودال
@@ -1144,7 +1193,7 @@
             // نمایش راهنمای لمسی در دستگاه‌های لمسی
             if (isTouchDevice()) {
                 setTimeout(() => {
-                    const rect = bitcoin.getBoundingClientRect();
+                    const rect = aiChip.getBoundingClientRect();
                     showTouchIndicator(rect.left + rect.width/2, rect.top + rect.height/2);
                 }, 1000);
             }
