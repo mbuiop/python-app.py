@@ -15,7 +15,7 @@
         }
         
         body {
-            background: linear-gradient(rgba(12, 14, 26, 0.8), rgba(0, 0, 0, 0.9)), url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcGF0dGVyblRyYW5zZm9ybT0icm90YXRlKDEzNSkiPjxyZWN0IHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0icmdiYSg5OSwgMTAyLCAyNDEsIDAuMSkiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InJnYmEoMTUsIDIzLCA0MiwgMC45KSIvPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz48L3N2Zz4=') center/cover no-repeat;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             color: #fff;
             min-height: 100vh;
             display: flex;
@@ -26,6 +26,66 @@
             position: relative;
             touch-action: manipulation;
             padding-bottom: 80px;
+        }
+        
+        /* افکت نورهای متحرک در پس‌زمینه */
+        .bg-effects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .light {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            filter: blur(40px);
+            animation: float 15s infinite linear;
+        }
+        
+        .light:nth-child(1) {
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .light:nth-child(2) {
+            top: 60%;
+            left: 70%;
+            animation-delay: -5s;
+            animation-duration: 20s;
+        }
+        
+        .light:nth-child(3) {
+            top: 30%;
+            left: 50%;
+            animation-delay: -10s;
+            animation-duration: 25s;
+            width: 250px;
+            height: 250px;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(100px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 100px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-100px, 50px) rotate(270deg);
+            }
         }
         
         .stars {
@@ -56,6 +116,7 @@
             width: 100%;
             max-width: 500px;
             padding: 20px;
+            z-index: 10;
         }
         
         .score-display {
@@ -223,6 +284,7 @@
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.9rem;
+            z-index: 10;
         }
         
         .click-effect {
@@ -617,6 +679,13 @@
     </style>
 </head>
 <body>
+    <!-- افکت‌های پس‌زمینه -->
+    <div class="bg-effects">
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+    </div>
+    
     <div class="stars" id="stars"></div>
     <div class="touch-indicator" id="touch-indicator"></div>
     
@@ -982,10 +1051,6 @@
                 globalX = e.clientX;
                 globalY = e.clientY;
             }
-            
-            // محاسبه مختصات نسبی نسبت به چیپ AI
-            const x = globalX - rect.left;
-            const y = globalY - rect.top;
             
             // افزایش امتیاز
             gameData.score += gameData.clickPower;
