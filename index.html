@@ -15,7 +15,7 @@
         }
         
         body {
-            background: linear-gradient(rgba(12, 14, 26, 0.8), rgba(0, 0, 0, 0.9)), url('m.jpg') center/cover no-repeat;
+            background: linear-gradient(rgba(12, 14, 26, 0.8), rgba(0, 0, 0, 0.9)), url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcGF0dGVyblRyYW5zZm9ybT0icm90YXRlKDEzNSkiPjxyZWN0IHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0icmdiYSg5OSwgMTAyLCAyNDEsIDAuMSkiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InJnYmEoMTUsIDIzLCA0MiwgMC45KSIvPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz48L3N2Zz4=') center/cover no-repeat;
             color: #fff;
             min-height: 100vh;
             display: flex;
@@ -816,20 +816,29 @@
         
         // بارگذاری داده‌های بازی
         function loadGameData() {
-            const savedData = localStorage.getItem('aiClickerProData');
-            if (savedData) {
-                const parsedData = JSON.parse(savedData);
-                gameData = { ...gameData, ...parsedData };
-                
-                // محاسبه هزینه ارتقای بعدی
-                calculateNextUpgradeCost();
+            try {
+                const savedData = localStorage.getItem('aiClickerProData');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    gameData = { ...gameData, ...parsedData };
+                    
+                    // محاسبه هزینه ارتقای بعدی
+                    calculateNextUpgradeCost();
+                }
+                return gameData;
+            } catch (error) {
+                console.error('خطا در بارگذاری داده‌ها:', error);
+                return gameData;
             }
-            return gameData;
         }
         
         // ذخیره داده‌های بازی
         function saveGameData(data = gameData) {
-            localStorage.setItem('aiClickerProData', JSON.stringify(data));
+            try {
+                localStorage.setItem('aiClickerProData', JSON.stringify(data));
+            } catch (error) {
+                console.error('خطا در ذخیره داده‌ها:', error);
+            }
         }
         
         // محاسبه هزینه ارتقای بعدی
@@ -938,8 +947,8 @@
                 updateUI();
                 
                 // افکت ویژه برای ارتقا
-                createParticles(aiChip.offsetLeft + aiChip.offsetWidth/2, 
-                               aiChip.offsetTop + aiChip.offsetHeight/2, 20);
+                const rect = aiChip.getBoundingClientRect();
+                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, 20);
                 
                 // لرزش چیپ AI
                 aiChip.classList.add('vibration');
@@ -959,174 +968,185 @@
             if (aiChip.classList.contains('vibration')) return;
             
             const rect = aiChip.getBoundingClientRect();
-            const globalX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width/2);
-            const globalY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height/2);
+            let globalX, globalY;
             
+            if (e.type === 'touchstart' || e.type === 'touchend') {
+                if (e.touches && e.touches.length > 0) {
+                    globalX = e.touches[0].clientX;
+                    globalY = e.touches[0].clientY;
+                } else if (e.changedTouches && e.changedTouches.length > 0) {
+                    globalX = e.changedTouches[0].clientX;
+                    globalY = e.changedTouches[0].clientY;
+                }
+            } else {
+                globalX = e.clientX;
+                globalY = e.clientY;
+            }
+            
+            // محاسبه مختصات نسبی نسبت به چیپ AI
+            const x = globalX - rect.left;
+            const y = globalY - rect.top;
+            
+            // افزایش امتیاز
+            gameData.score += gameData.clickPower;
+            
+            // ایجاد افکت‌های بصری
             createClickEffect(globalX, globalY);
             createParticles(globalX, globalY, 5);
             showDollarEffect(globalX, globalY, gameData.clickPower);
             
-            gameData.score += gameData.clickPower;
-            gameData.lastUpdate = Date.now();
-            
-            saveGameData();
-            updateUI();
-            
-            // افکت کلیک روی چیپ AI
+            // لرزش چیپ AI
             aiChip.classList.add('vibration');
             setTimeout(() => {
                 aiChip.classList.remove('vibration');
             }, 100);
             
-            // نشانگر لمسی برای دستگاه‌های لمسی
+            // ذخیره داده‌ها و به‌روزرسانی UI
+            saveGameData();
+            updateUI();
+            
+            // نشانگر لمسی
             if (isTouchDevice()) {
                 showTouchIndicator(globalX, globalY);
             }
         }
         
-        // تنظیم رویدادهای لمسی
-        function setupTouchEvents() {
-            if (isTouchDevice()) {
-                // جلوگیری از زوم با دبل تاپ
-                aiChip.addEventListener('touchstart', function(e) {
-                    if (e.touches.length > 1) {
-                        e.preventDefault();
-                    }
-                }, { passive: false });
-                
-                // جلوگیری از اسکرول هنگام تاچ
-                document.body.addEventListener('touchmove', function(e) {
-                    if (e.target === aiChip || aiChip.contains(e.target)) {
-                        e.preventDefault();
-                    }
-                }, { passive: false });
-            }
-        }
-        
-        // کپی به کلیپ‌بورد
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showNotification('کپی شد!');
-            }).catch(err => {
-                console.error('خطا در کپی: ', err);
-                // روش جایگزین برای مرورگرهای قدیمی
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification('کپی شد!');
-            });
-        }
-        
         // مدیریت پخش آهنگ
         function loadSong(index) {
-            if (index >= 0 && index < songItems.length) {
-                currentSongIndex = index;
-                const songSrc = songItems[index].getAttribute('data-src');
-                const songName = songItems[index].getAttribute('data-name');
+            try {
+                // حذف آهنگ قبلی
+                backgroundAudio.src = '';
+                
+                // بارگذاری آهنگ جدید
+                const songItem = songItems[index];
+                const songSrc = songItem.getAttribute('data-src');
+                const songName = songItem.getAttribute('data-name');
+                
+                // استفاده از آهنگ‌های آنلاین به عنوان جایگزین
+                const fallbackSongs = [
+                    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+                    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+                    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+                ];
                 
                 backgroundAudio.src = songSrc;
-                currentSongName.textContent = `آهنگ: ${songName}`;
+                backgroundAudio.load();
                 
-                // به‌روزرسانی وضعیت آهنگ فعال
-                songItems.forEach((item, i) => {
-                    if (i === index) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
+                // اگر آهنگ بارگذاری نشد، از آهنگ جایگزین استفاده کن
+                backgroundAudio.onerror = function() {
+                    console.warn('خطا در بارگذاری آهنگ، استفاده از آهنگ جایگزین');
+                    backgroundAudio.src = fallbackSongs[index % fallbackSongs.length];
+                    backgroundAudio.load();
+                };
+                
+                currentSongName.textContent = `آهنگ: ${songName}`;
+                currentSongIndex = index;
+                
+                // به‌روزرسانی وضعیت فعال در لیست
+                songItems.forEach(item => item.classList.remove('active'));
+                songItem.classList.add('active');
+                
+                // اگر در حال پخش بود، پخش را ادامه بده
+                if (isPlaying) {
+                    backgroundAudio.play().catch(e => {
+                        console.error('خطا در پخش آهنگ:', e);
+                        isPlaying = false;
+                        musicIndicator.classList.remove('playing');
+                    });
+                }
+            } catch (error) {
+                console.error('خطا در بارگذاری آهنگ:', error);
             }
         }
         
+        // پخش آهنگ
         function playSong() {
-            backgroundAudio.play().then(() => {
-                isPlaying = true;
-                musicIndicator.classList.add('playing');
-                updateMusicControls();
-            }).catch(error => {
-                console.log('خطا در پخش آهنگ:', error);
-            });
+            try {
+                backgroundAudio.play().then(() => {
+                    isPlaying = true;
+                    musicIndicator.classList.add('playing');
+                }).catch(e => {
+                    console.error('خطا در پخش آهنگ:', e);
+                    isPlaying = false;
+                    musicIndicator.classList.remove('playing');
+                });
+            } catch (error) {
+                console.error('خطا در پخش آهنگ:', error);
+            }
         }
         
+        // توقف آهنگ
         function pauseSong() {
-            backgroundAudio.pause();
-            isPlaying = false;
-            musicIndicator.classList.remove('playing');
-            updateMusicControls();
+            try {
+                backgroundAudio.pause();
+                isPlaying = false;
+                musicIndicator.classList.remove('playing');
+            } catch (error) {
+                console.error('خطا در توقف آهنگ:', error);
+            }
         }
         
-        function stopSong() {
-            backgroundAudio.pause();
-            backgroundAudio.currentTime = 0;
-            isPlaying = false;
-            musicIndicator.classList.remove('playing');
-            updateMusicControls();
-        }
-        
+        // آهنگ بعدی
         function nextSong() {
-            let nextIndex = currentSongIndex + 1;
-            if (nextIndex >= songItems.length) {
-                nextIndex = 0;
-            }
-            loadSong(nextIndex);
-            if (isPlaying) {
-                playSong();
-            }
+            currentSongIndex = (currentSongIndex + 1) % songItems.length;
+            loadSong(currentSongIndex);
         }
         
+        // آهنگ قبلی
         function prevSong() {
-            let prevIndex = currentSongIndex - 1;
-            if (prevIndex < 0) {
-                prevIndex = songItems.length - 1;
-            }
-            loadSong(prevIndex);
-            if (isPlaying) {
-                playSong();
+            currentSongIndex = (currentSongIndex - 1 + songItems.length) % songItems.length;
+            loadSong(currentSongIndex);
+        }
+        
+        // توقف کامل آهنگ
+        function stopSong() {
+            try {
+                backgroundAudio.pause();
+                backgroundAudio.currentTime = 0;
+                isPlaying = false;
+                musicIndicator.classList.remove('playing');
+            } catch (error) {
+                console.error('خطا در توقف آهنگ:', error);
             }
         }
         
-        function updateMusicControls() {
-            if (isPlaying) {
-                playBtn.style.display = 'none';
-                pauseBtn.style.display = 'flex';
-            } else {
-                playBtn.style.display = 'flex';
-                pauseBtn.style.display = 'none';
+        // کپی آدرس کیف پول
+        function copyWalletAddress() {
+            try {
+                navigator.clipboard.writeText(walletAddress.textContent).then(() => {
+                    showNotification('آدرس کیف پول کپی شد!');
+                }).catch(() => {
+                    // روش جایگزین برای دستگاه‌های قدیمی
+                    const textArea = document.createElement('textarea');
+                    textArea.value = walletAddress.textContent;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('آدرس کیف پول کپی شد!');
+                });
+            } catch (error) {
+                console.error('خطا در کپی آدرس:', error);
+                showNotification('خطا در کپی آدرس!');
             }
         }
         
-        // راه‌اندازی بازی
-        function initGame() {
-            createStars();
-            loadGameData();
-            setupTouchEvents();
-            
-            // اضافه کردن event listeners
+        // تنظیم رویدادها
+        function setupEventListeners() {
+            // رویدادهای کلیک برای چیپ AI
             aiChip.addEventListener('click', handleAIChipClick);
-            aiChip.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                handleAIChipClick(e);
-            }, { passive: false });
-            aiChip.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                handleAIChipClick(e);
-            }, { passive: false });
+            aiChip.addEventListener('touchstart', handleAIChipClick, { passive: false });
+            
+            // رویداد ارتقا
             upgradeBtn.addEventListener('click', upgradeClickPower);
             
-            // event listeners مودال
+            // رویدادهای مودال
             donateBtn.addEventListener('click', () => {
                 donateModal.style.display = 'flex';
             });
             
             musicBtn.addEventListener('click', () => {
                 musicModal.style.display = 'flex';
-                // بارگذاری اولین آهنگ اگر قبلاً بارگذاری نشده
-                if (backgroundAudio.src === '') {
-                    loadSong(0);
-                }
             });
             
             closeDonate.addEventListener('click', () => {
@@ -1135,76 +1155,74 @@
             
             closeMusic.addEventListener('click', () => {
                 musicModal.style.display = 'none';
-                // آهنگ در پس‌زمینه ادامه می‌یابد - قطع نمی‌شود
             });
             
-            copyWallet.addEventListener('click', () => {
-                copyToClipboard(walletAddress.textContent);
-            });
-            
-            // event listeners پخش آهنگ
-            playBtn.addEventListener('click', playSong);
-            pauseBtn.addEventListener('click', pauseSong);
-            stopBtn.addEventListener('click', stopSong);
-            nextBtn.addEventListener('click', nextSong);
-            prevBtn.addEventListener('click', prevSong);
-            
-            // کلیک روی آهنگ‌ها
-            songItems.forEach((item, index) => {
-                item.addEventListener('click', () => {
-                    loadSong(index);
-                    playSong();
-                });
-            });
-            
-            // پخش خودکار آهنگ بعدی
-            backgroundAudio.addEventListener('ended', nextSong);
-            
-            // به‌روزرسانی وضعیت پخش
-            backgroundAudio.addEventListener('play', () => {
-                isPlaying = true;
-                musicIndicator.classList.add('playing');
-                updateMusicControls();
-            });
-            
-            backgroundAudio.addEventListener('pause', () => {
-                isPlaying = false;
-                musicIndicator.classList.remove('playing');
-                updateMusicControls();
-            });
-            
-            // بستن مودال با کلیک خارج
+            // بستن مودال با کلیک خارج از آن
             window.addEventListener('click', (e) => {
                 if (e.target === donateModal) {
                     donateModal.style.display = 'none';
                 }
                 if (e.target === musicModal) {
                     musicModal.style.display = 'none';
-                    // آهنگ در پس‌زمینه ادامه می‌یابد
                 }
             });
             
-            // ذخیره خودکار هر 5 ثانیه
-            setInterval(() => saveGameData(), 5000);
+            // رویدادهای پخش آهنگ
+            playBtn.addEventListener('click', playSong);
+            pauseBtn.addEventListener('click', pauseSong);
+            nextBtn.addEventListener('click', nextSong);
+            prevBtn.addEventListener('click', prevSong);
+            stopBtn.addEventListener('click', stopSong);
             
-            // ذخیره هنگام بسته شدن صفحه
-            window.addEventListener('beforeunload', () => saveGameData());
+            // رویدادهای انتخاب آهنگ از لیست
+            songItems.forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    loadSong(index);
+                    if (isPlaying) {
+                        playSong();
+                    }
+                });
+            });
             
-            // نمایش راهنمای لمسی در دستگاه‌های لمسی
-            if (isTouchDevice()) {
-                setTimeout(() => {
-                    const rect = aiChip.getBoundingClientRect();
-                    showTouchIndicator(rect.left + rect.width/2, rect.top + rect.height/2);
-                }, 1000);
-            }
+            // رویداد کپی آدرس کیف پول
+            copyWallet.addEventListener('click', copyWalletAddress);
             
-            // به‌روزرسانی اولیه UI
-            updateUI();
-            updateMusicControls();
+            // رویداد پایان آهنگ برای پخش آهنگ بعدی
+            backgroundAudio.addEventListener('ended', nextSong);
+            
+            // ذخیره داده‌ها هنگام بسته شدن صفحه
+            window.addEventListener('beforeunload', () => {
+                saveGameData();
+            });
+            
+            // ذخیره دوره‌ای داده‌ها (هر 30 ثانیه)
+            setInterval(() => {
+                saveGameData();
+            }, 30000);
         }
         
-        // شروع بازی هنگامی که DOM بارگذاری شد
-        document.addEventListener('DOMContentLoaded', initGame);
+        // مقداردهی اولیه بازی
+        function initGame() {
+            // ایجاد ستاره‌ها
+            createStars();
+            
+            // بارگذاری داده‌های ذخیره شده
+            loadGameData();
+            
+            // به‌روزرسانی UI
+            updateUI();
+            
+            // تنظیم رویدادها
+            setupEventListeners();
+            
+            // بارگذاری اولین آهنگ
+            loadSong(currentSongIndex);
+            
+            console.log('بازی با موفقیت بارگذاری شد!');
+        }
+        
+        // شروع بازی پس از بارگذاری صفحه
+        window.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
 </html>
