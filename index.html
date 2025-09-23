@@ -15,7 +15,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: url('m.jpg') center/cover no-repeat;
             color: #fff;
             min-height: 100vh;
             display: flex;
@@ -26,66 +26,6 @@
             position: relative;
             touch-action: manipulation;
             padding-bottom: 80px;
-        }
-        
-        /* افکت نورهای متحرک در پس‌زمینه */
-        .bg-effects {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
-        .light {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
-            filter: blur(40px);
-            animation: float 15s infinite linear;
-        }
-        
-        .light:nth-child(1) {
-            top: 10%;
-            left: 20%;
-            animation-delay: 0s;
-            width: 300px;
-            height: 300px;
-        }
-        
-        .light:nth-child(2) {
-            top: 60%;
-            left: 70%;
-            animation-delay: -5s;
-            animation-duration: 20s;
-        }
-        
-        .light:nth-child(3) {
-            top: 30%;
-            left: 50%;
-            animation-delay: -10s;
-            animation-duration: 25s;
-            width: 250px;
-            height: 250px;
-        }
-        
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            25% {
-                transform: translate(100px, 50px) rotate(90deg);
-            }
-            50% {
-                transform: translate(0, 100px) rotate(180deg);
-            }
-            75% {
-                transform: translate(-100px, 50px) rotate(270deg);
-            }
         }
         
         .stars {
@@ -116,7 +56,6 @@
             width: 100%;
             max-width: 500px;
             padding: 20px;
-            z-index: 10;
         }
         
         .score-display {
@@ -137,30 +76,13 @@
             50% { transform: scale(1.05); }
         }
         
-        .ai-chip-3d {
+        .ai-chip {
             width: 320px;
             height: 320px;
-            position: relative;
+            background: radial-gradient(circle at 30% 30%, #6366f1, #4338ca);
+            border-radius: 20px;
             cursor: pointer;
             margin: 30px 0;
-            transform-style: preserve-3d;
-            transition: transform 0.3s;
-        }
-        
-        .ai-chip-3d:hover {
-            transform: scale(1.05) rotateY(5deg);
-        }
-        
-        .ai-chip-3d:active {
-            transform: scale(0.95) rotateY(-5deg);
-        }
-        
-        .ai-chip-front, .ai-chip-back {
-            width: 100%;
-            height: 100%;
-            border-radius: 20px;
-            position: absolute;
-            backface-visibility: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -168,16 +90,13 @@
             box-shadow: 
                 0 0 50px rgba(99, 102, 241, 0.8),
                 inset 0 0 40px rgba(139, 92, 246, 0.4);
+            transition: transform 0.1s;
+            position: relative;
+            overflow: hidden;
         }
         
-        .ai-chip-front {
-            background: radial-gradient(circle at 30% 30%, #6366f1, #4338ca);
-            transform: rotateY(0deg);
-        }
-        
-        .ai-chip-back {
-            background: radial-gradient(circle at 70% 30%, #6366f1, #4338ca);
-            transform: rotateY(180deg);
+        .ai-chip:active {
+            transform: scale(0.95);
         }
         
         .ai-chip-image {
@@ -284,7 +203,6 @@
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.9rem;
-            z-index: 10;
         }
         
         .click-effect {
@@ -327,15 +245,6 @@
                 transform: translate(var(--tx), var(--ty)) scale(0);
                 opacity: 0;
             }
-        }
-        
-        .auto-rotate {
-            animation: autoRotate 20s infinite linear;
-        }
-        
-        @keyframes autoRotate {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
         }
         
         .vibration {
@@ -563,7 +472,7 @@
         }
         
         @media (max-width: 600px) {
-            .ai-chip-3d {
+            .ai-chip {
                 width: 260px;
                 height: 260px;
             }
@@ -599,7 +508,7 @@
         }
         
         @media (max-width: 400px) {
-            .ai-chip-3d {
+            .ai-chip {
                 width: 220px;
                 height: 220px;
             }
@@ -624,32 +533,6 @@
             
             .nav-icon {
                 font-size: 1.2rem;
-            }
-        }
-        
-        .touch-indicator {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
-            pointer-events: none;
-            animation: touchPulse 2s infinite;
-            display: none;
-        }
-        
-        @keyframes touchPulse {
-            0% {
-                transform: scale(0.8);
-                opacity: 0.7;
-            }
-            50% {
-                transform: scale(1.2);
-                opacity: 0.3;
-            }
-            100% {
-                transform: scale(0.8);
-                opacity: 0.7;
             }
         }
         
@@ -679,15 +562,7 @@
     </style>
 </head>
 <body>
-    <!-- افکت‌های پس‌زمینه -->
-    <div class="bg-effects">
-        <div class="light"></div>
-        <div class="light"></div>
-        <div class="light"></div>
-    </div>
-    
     <div class="stars" id="stars"></div>
-    <div class="touch-indicator" id="touch-indicator"></div>
     
     <!-- Music Indicator -->
     <div class="music-indicator" id="music-indicator">
@@ -698,13 +573,8 @@
     <div class="container">
         <div class="score-display" id="score">۰ AI</div>
         
-        <div class="ai-chip-3d" id="ai-chip">
-            <div class="ai-chip-front">
-                <div class="ai-chip-image"></div>
-            </div>
-            <div class="ai-chip-back">
-                <div class="ai-chip-image"></div>
-            </div>
+        <div class="ai-chip" id="ai-chip">
+            <div class="ai-chip-image"></div>
         </div>
         
         <div class="upgrade-container">
@@ -812,25 +682,6 @@
             }
         }
         
-        // بررسی دستگاه لمسی
-        function isTouchDevice() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        }
-        
-        // نشانگر لمسی
-        function showTouchIndicator(x, y) {
-            if (!isTouchDevice()) return;
-            
-            const indicator = document.getElementById('touch-indicator');
-            indicator.style.display = 'block';
-            indicator.style.left = `${x - 30}px`;
-            indicator.style.top = `${y - 30}px`;
-            
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 2000);
-        }
-        
         // نمایش نوتیفیکیشن
         function showNotification(message) {
             const notification = document.getElementById('notification');
@@ -925,13 +776,6 @@
             // به‌روزرسانی متن دکمه ارتقا
             upgradeBtn.textContent = `ارتقای قدرت کلیک (${formatNumber(gameData.nextUpgradeCost)} سکه)`;
             upgradeBtn.disabled = gameData.score < gameData.nextUpgradeCost;
-            
-            // چرخش خودکار چیپ AI وقتی امتیاز بالا باشد
-            if (gameData.score > 100000) {
-                aiChip.classList.add('auto-rotate');
-            } else {
-                aiChip.classList.remove('auto-rotate');
-            }
         }
         
         // قالب‌بندی اعداد با جداکننده هزارگان
@@ -1029,81 +873,38 @@
         
         // کلیک روی چیپ AI
         function handleAIChipClick(e) {
-            // جلوگیری از پردازش رویداد چندگانه
-            e.preventDefault();
-            e.stopPropagation();
-            
             // جلوگیری از کلیک‌های سریع پشت سر هم
             if (aiChip.classList.contains('vibration')) return;
             
             const rect = aiChip.getBoundingClientRect();
-            let globalX, globalY;
+            const globalX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width/2);
+            const globalY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height/2);
             
-            if (e.type === 'touchstart' || e.type === 'touchend') {
-                if (e.touches && e.touches.length > 0) {
-                    globalX = e.touches[0].clientX;
-                    globalY = e.touches[0].clientY;
-                } else if (e.changedTouches && e.changedTouches.length > 0) {
-                    globalX = e.changedTouches[0].clientX;
-                    globalY = e.changedTouches[0].clientY;
-                }
-            } else {
-                globalX = e.clientX;
-                globalY = e.clientY;
-            }
-            
-            // افزایش امتیاز
-            gameData.score += gameData.clickPower;
-            
-            // ایجاد افکت‌های بصری
             createClickEffect(globalX, globalY);
             createParticles(globalX, globalY, 5);
             showDollarEffect(globalX, globalY, gameData.clickPower);
             
-            // لرزش چیپ AI
+            gameData.score += gameData.clickPower;
+            gameData.lastUpdate = Date.now();
+            
+            saveGameData();
+            updateUI();
+            
+            // افکت کلیک روی چیپ AI
             aiChip.classList.add('vibration');
             setTimeout(() => {
                 aiChip.classList.remove('vibration');
             }, 100);
-            
-            // ذخیره داده‌ها و به‌روزرسانی UI
-            saveGameData();
-            updateUI();
-            
-            // نشانگر لمسی
-            if (isTouchDevice()) {
-                showTouchIndicator(globalX, globalY);
-            }
         }
         
         // مدیریت پخش آهنگ
         function loadSong(index) {
             try {
-                // حذف آهنگ قبلی
-                backgroundAudio.src = '';
-                
-                // بارگذاری آهنگ جدید
                 const songItem = songItems[index];
                 const songSrc = songItem.getAttribute('data-src');
                 const songName = songItem.getAttribute('data-name');
                 
-                // استفاده از آهنگ‌های آنلاین به عنوان جایگزین
-                const fallbackSongs = [
-                    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-                    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-                    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
-                ];
-                
                 backgroundAudio.src = songSrc;
-                backgroundAudio.load();
-                
-                // اگر آهنگ بارگذاری نشد، از آهنگ جایگزین استفاده کن
-                backgroundAudio.onerror = function() {
-                    console.warn('خطا در بارگذاری آهنگ، استفاده از آهنگ جایگزین');
-                    backgroundAudio.src = fallbackSongs[index % fallbackSongs.length];
-                    backgroundAudio.load();
-                };
-                
                 currentSongName.textContent = `آهنگ: ${songName}`;
                 currentSongIndex = index;
                 
@@ -1115,8 +916,6 @@
                 if (isPlaying) {
                     backgroundAudio.play().catch(e => {
                         console.error('خطا در پخش آهنگ:', e);
-                        isPlaying = false;
-                        musicIndicator.classList.remove('playing');
                     });
                 }
             } catch (error) {
@@ -1132,8 +931,6 @@
                     musicIndicator.classList.add('playing');
                 }).catch(e => {
                     console.error('خطا در پخش آهنگ:', e);
-                    isPlaying = false;
-                    musicIndicator.classList.remove('playing');
                 });
             } catch (error) {
                 console.error('خطا در پخش آهنگ:', error);
@@ -1200,7 +997,7 @@
         function setupEventListeners() {
             // رویدادهای کلیک برای چیپ AI
             aiChip.addEventListener('click', handleAIChipClick);
-            aiChip.addEventListener('touchstart', handleAIChipClick, { passive: false });
+            aiChip.addEventListener('touchstart', handleAIChipClick);
             
             // رویداد ارتقا
             upgradeBtn.addEventListener('click', upgradeClickPower);
@@ -1212,6 +1009,10 @@
             
             musicBtn.addEventListener('click', () => {
                 musicModal.style.display = 'flex';
+                // بارگذاری اولین آهنگ اگر قبلاً بارگذاری نشده
+                if (backgroundAudio.src === '') {
+                    loadSong(0);
+                }
             });
             
             closeDonate.addEventListener('click', () => {
@@ -1220,16 +1021,6 @@
             
             closeMusic.addEventListener('click', () => {
                 musicModal.style.display = 'none';
-            });
-            
-            // بستن مودال با کلیک خارج از آن
-            window.addEventListener('click', (e) => {
-                if (e.target === donateModal) {
-                    donateModal.style.display = 'none';
-                }
-                if (e.target === musicModal) {
-                    musicModal.style.display = 'none';
-                }
             });
             
             // رویدادهای پخش آهنگ
@@ -1243,9 +1034,7 @@
             songItems.forEach((item, index) => {
                 item.addEventListener('click', () => {
                     loadSong(index);
-                    if (isPlaying) {
-                        playSong();
-                    }
+                    playSong();
                 });
             });
             
@@ -1255,15 +1044,21 @@
             // رویداد پایان آهنگ برای پخش آهنگ بعدی
             backgroundAudio.addEventListener('ended', nextSong);
             
-            // ذخیره داده‌ها هنگام بسته شدن صفحه
-            window.addEventListener('beforeunload', () => {
-                saveGameData();
+            // بستن مودال با کلیک خارج
+            window.addEventListener('click', (e) => {
+                if (e.target === donateModal) {
+                    donateModal.style.display = 'none';
+                }
+                if (e.target === musicModal) {
+                    musicModal.style.display = 'none';
+                }
             });
             
-            // ذخیره دوره‌ای داده‌ها (هر 30 ثانیه)
-            setInterval(() => {
-                saveGameData();
-            }, 30000);
+            // ذخیره خودکار هر 30 ثانیه
+            setInterval(() => saveGameData(), 30000);
+            
+            // ذخیره هنگام بسته شدن صفحه
+            window.addEventListener('beforeunload', () => saveGameData());
         }
         
         // مقداردهی اولیه بازی
@@ -1274,20 +1069,17 @@
             // بارگذاری داده‌های ذخیره شده
             loadGameData();
             
-            // به‌روزرسانی UI
-            updateUI();
-            
             // تنظیم رویدادها
             setupEventListeners();
             
-            // بارگذاری اولین آهنگ
-            loadSong(currentSongIndex);
+            // به‌روزرسانی UI
+            updateUI();
             
             console.log('بازی با موفقیت بارگذاری شد!');
         }
         
         // شروع بازی پس از بارگذاری صفحه
-        window.addEventListener('DOMContentLoaded', initGame);
+        document.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
 </html>
