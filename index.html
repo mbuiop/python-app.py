@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>کلیکر AI حرفه‌ای</title>
     <style>
+        /* استایل‌های قبلی شما (دقیقاً کپی شده) */
         * {
             margin: 0;
             padding: 0;
@@ -153,6 +154,34 @@
             }
             100% {
                 transform: translateY(-120px) scale(1.8) rotate(10deg);
+                opacity: 0;
+            }
+        }
+        
+        /* افکت جدید سکه */
+        .coin-effect {
+            position: absolute;
+            font-size: 2.5rem;
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+            animation: coinFloat 1.2s ease-out forwards;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.9);
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+        }
+        
+        @keyframes coinFloat {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-60px) scale(1.4) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120px) scale(1.8) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -471,6 +500,112 @@
             background: rgba(99, 102, 241, 0.4);
         }
         
+        /* استایل‌های جدید برای کارت‌ها */
+        .cards-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cards-container {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 95%;
+            width: 600px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .card-level {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .card-cost {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #ffd700;
+        }
+        
+        .mining-stats {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mining-progress {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .mining-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
         @media (max-width: 600px) {
             .ai-chip {
                 width: 260px;
@@ -494,6 +629,10 @@
                 font-size: 2.8rem;
             }
             
+            .coin-effect {
+                font-size: 2rem;
+            }
+            
             .stats {
                 bottom: 90px;
                 right: 10px;
@@ -504,6 +643,11 @@
                 top: 10px;
                 left: 10px;
                 font-size: 0.7rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 15px;
             }
         }
         
@@ -533,6 +677,11 @@
             
             .nav-icon {
                 font-size: 1.2rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 10px;
             }
         }
         
@@ -585,6 +734,7 @@
     <div class="stats">
         <div>قدرت کلیک: <span id="click-power">۱</span></div>
         <div>سطح ارتقا: <span id="upgrade-level">۱</span></div>
+        <div>ماینینگ خودکار: <span id="auto-mining">۰</span> سکه/ثانیه</div>
     </div>
     
     <!-- Hidden Audio Element for Background Playback -->
@@ -592,6 +742,10 @@
     
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
+        <div class="nav-item" id="cards-btn">
+            <div class="nav-icon">🃏</div>
+            <span>کارت</span>
+        </div>
         <div class="nav-item" id="music-btn">
             <div class="nav-icon">🎵</div>
             <span>آهنگ</span>
@@ -599,6 +753,33 @@
         <div class="nav-item" id="donate-btn">
             <div class="nav-icon">❤️</div>
             <span>حمایت مالی</span>
+        </div>
+    </div>
+    
+    <!-- Cards Modal -->
+    <div class="cards-modal" id="cards-modal">
+        <div class="cards-container">
+            <h2>کارت‌های هوش مصنوعی</h2>
+            <p>ارتقای کارت‌ها باعث افزایش ماینینگ خودکار می‌شود</p>
+            
+            <div class="cards-grid" id="cards-grid">
+                <!-- کارت‌ها به صورت دینامیک تولید می‌شوند -->
+            </div>
+            
+            <div class="mining-stats">
+                <h3>وضعیت ماینینگ خودکار</h3>
+                <div>سطح ماینینگ: <span id="mining-level">۱</span></div>
+                <div>تعداد کارت‌های ارتقا یافته: <span id="upgraded-cards">۰</span> از ۶</div>
+                <div>درآمد خودکار: <span id="auto-income">۰</span> سکه/ثانیه</div>
+                <div>زمان باقیمانده: <span id="mining-time">۰</span> ثانیه</div>
+                <div class="mining-progress">
+                    <div class="mining-progress-bar" id="mining-progress"></div>
+                </div>
+                <div>سکه‌های استخراج شده: <span id="mined-coins">۰</span></div>
+                <button class="copy-btn" id="collect-mining">دریافت سکه‌های استخراج شده</button>
+            </div>
+            
+            <button class="close-modal" id="close-cards">بستن</button>
         </div>
     </div>
     
@@ -702,6 +883,20 @@
         const musicIndicator = document.getElementById('music-indicator');
         const currentSongName = document.getElementById('current-song-name');
         
+        // عناصر جدید برای کارت‌ها
+        const cardsModal = document.getElementById('cards-modal');
+        const cardsBtn = document.getElementById('cards-btn');
+        const closeCards = document.getElementById('close-cards');
+        const cardsGrid = document.getElementById('cards-grid');
+        const miningLevelElement = document.getElementById('mining-level');
+        const upgradedCardsElement = document.getElementById('upgraded-cards');
+        const autoIncomeElement = document.getElementById('auto-income');
+        const miningTimeElement = document.getElementById('mining-time');
+        const miningProgressElement = document.getElementById('mining-progress');
+        const minedCoinsElement = document.getElementById('mined-coins');
+        const collectMiningBtn = document.getElementById('collect-mining');
+        const autoMiningElement = document.getElementById('auto-mining');
+        
         // عناصر مودال
         const donateModal = document.getElementById('donate-modal');
         const musicModal = document.getElementById('music-modal');
@@ -727,12 +922,29 @@
             clickPower: 1,
             upgradeLevel: 1,
             nextUpgradeCost: 10000,
-            lastUpdate: Date.now()
+            lastUpdate: Date.now(),
+            // داده‌های جدید برای کارت‌ها - 6 کارت هوش مصنوعی
+            cards: [
+                { level: 0, baseCost: 100000, name: "ChatGPT-4", icon: "🤖", image: "chatgpt4.jpg" },
+                { level: 0, baseCost: 100000, name: "Google Gemini", icon: "🧠", image: "gemini.jpg" },
+                { level: 0, baseCost: 100000, name: "Claude AI", icon: "💡", image: "claude.jpg" },
+                { level: 0, baseCost: 100000, name: "Midjourney", icon: "⚡", image: "midjourney.jpg" },
+                { level: 0, baseCost: 100000, name: "DALL-E 3", icon: "🔮", image: "dalle.jpg" },
+                { level: 0, baseCost: 100000, name: "Stable Diffusion", icon: "🌟", image: "stable_diffusion.jpg" }
+            ],
+            miningLevel: 1,
+            miningStartTime: 0,
+            minedCoins: 0,
+            lastMiningUpdate: Date.now()
         };
         
         // داده‌های پخش آهنگ
         let currentSongIndex = 0;
         let isPlaying = false;
+        
+        // متغیر برای مدیریت کلیک‌های سریع
+        let lastClickTime = 0;
+        const clickCooldown = 100; // میلی‌ثانیه بین کلیک‌ها
         
         // بارگذاری داده‌های بازی
         function loadGameData() {
@@ -744,6 +956,9 @@
                     
                     // محاسبه هزینه ارتقای بعدی
                     calculateNextUpgradeCost();
+                    
+                    // محاسبه ماینینگ خودکار
+                    calculateAutoMining();
                 }
                 return gameData;
             } catch (error) {
@@ -767,26 +982,117 @@
             gameData.nextUpgradeCost = Math.floor(10000 * Math.pow(1.5, gameData.upgradeLevel - 1));
         }
         
-        // به‌روزرسانی UI
-        function updateUI() {
-            scoreElement.textContent = formatNumber(gameData.score) + " AI";
-            clickPowerElement.textContent = formatNumber(gameData.clickPower);
-            upgradeLevelElement.textContent = gameData.upgradeLevel;
+        // محاسبه ماینینگ خودکار
+        function calculateAutoMining() {
+            // محاسبه تعداد کارت‌های ارتقا یافته
+            const upgradedCardsCount = gameData.cards.filter(card => card.level > 0).length;
             
-            // به‌روزرسانی متن دکمه ارتقا
-            upgradeBtn.textContent = `ارتقای قدرت کلیک (${formatNumber(gameData.nextUpgradeCost)} سکه)`;
-            upgradeBtn.disabled = gameData.score < gameData.nextUpgradeCost;
+            // محاسبه سطح ماینینگ بر اساس تعداد کارت‌های ارتقا یافته
+            gameData.miningLevel = Math.max(1, Math.floor(upgradedCardsCount / 2) + 1);
+            
+            // محاسبه درآمد خودکار (هر کارت ارتقا یافته 0.5 سکه در ثانیه تولید می‌کند)
+            gameData.autoMiningRate = upgradedCardsCount * 0.5;
+            
+            // به‌روزرسانی نمایش
+            upgradedCardsElement.textContent = upgradedCardsCount;
+            miningLevelElement.textContent = gameData.miningLevel;
+            autoIncomeElement.textContent = gameData.autoMiningRate.toFixed(1);
+            autoMiningElement.textContent = gameData.autoMiningRate.toFixed(1);
+            
+            // اگر ماینینگ فعال نیست و کارت ارتقا یافته داریم، شروع ماینینگ
+            if (gameData.autoMiningRate > 0 && gameData.miningStartTime === 0) {
+                gameData.miningStartTime = Date.now();
+                gameData.lastMiningUpdate = Date.now();
+            }
         }
         
-        // قالب‌بندی اعداد با جداکننده هزارگان
+        // تولید کارت‌ها در مودال
+        function generateCards() {
+            cardsGrid.innerHTML = '';
+            
+            gameData.cards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                if (card.level === 0) {
+                    cardElement.classList.add('disabled');
+                }
+                
+                const upgradeCost = Math.floor(card.baseCost * Math.pow(1.5, card.level));
+                
+                cardElement.innerHTML = `
+                    <div class="card-image" style="background-image: url('${card.image}');">
+                        ${card.icon}
+                    </div>
+                    <div class="card-name">${card.name}</div>
+                    <div class="card-level">سطح: ${card.level}</div>
+                    <div class="card-cost">ارتقا: ${formatNumber(upgradeCost)} سکه</div>
+                `;
+                
+                cardElement.addEventListener('click', () => {
+                    upgradeCard(index);
+                });
+                
+                cardsGrid.appendChild(cardElement);
+            });
+        }
+        
+        // ارتقای کارت
+        function upgradeCard(index) {
+            const card = gameData.cards[index];
+            const upgradeCost = Math.floor(card.baseCost * Math.pow(1.5, card.level));
+            
+            if (gameData.score >= upgradeCost) {
+                gameData.score -= upgradeCost;
+                card.level++;
+                
+                updateScore();
+                generateCards();
+                calculateAutoMining();
+                saveGameData();
+                
+                // افکت ارتقا
+                createUpgradeEffect();
+                showNotification(`کارت ${card.name} ارتقا یافت!`);
+            } else {
+                showNotification('سکه کافی ندارید!');
+            }
+        }
+        
+        // ایجاد افکت ارتقا
+        function createUpgradeEffect() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    createParticle();
+                }, i * 50);
+            }
+        }
+        
+        // به‌روزرسانی امتیاز
+        function updateScore() {
+            scoreElement.textContent = `${formatNumber(gameData.score)} AI`;
+            upgradeBtn.textContent = `ارتقای قدرت کلیک (${formatNumber(gameData.nextUpgradeCost)} سکه)`;
+            
+            // غیرفعال کردن دکمه ارتقا اگر سکه کافی نیست
+            upgradeBtn.disabled = gameData.score < gameData.nextUpgradeCost;
+            
+            clickPowerElement.textContent = gameData.clickPower;
+            upgradeLevelElement.textContent = gameData.upgradeLevel;
+        }
+        
+        // قالب‌بندی اعداد
         function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
         }
         
         // ایجاد افکت کلیک
         function createClickEffect(x, y) {
             const effect = document.createElement('div');
-            effect.className = 'click-effect';
+            effect.classList.add('click-effect');
             effect.style.left = `${x}px`;
             effect.style.top = `${y}px`;
             document.body.appendChild(effect);
@@ -796,290 +1102,334 @@
             }, 600);
         }
         
-        // ایجاد ذرات طلا
-        function createParticles(x, y, count) {
-            for (let i = 0; i < count; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // موقعیت تصادفی برای ذرات
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 50 + Math.random() * 100;
-                const tx = Math.cos(angle) * distance;
-                const ty = Math.sin(angle) * distance;
-                
-                particle.style.setProperty('--tx', `${tx}px`);
-                particle.style.setProperty('--ty', `${ty}px`);
-                
-                particle.style.left = `${x}px`;
-                particle.style.top = `${y}px`;
-                
-                document.body.appendChild(particle);
-                
-                setTimeout(() => {
-                    particle.remove();
-                }, 1000);
-            }
-        }
-        
-        // نمایش افکت دلار
-        function showDollarEffect(x, y, amount) {
-            const dollarEffect = document.createElement('div');
-            dollarEffect.className = 'dollar-effect';
-            dollarEffect.innerHTML = '💵';
-            dollarEffect.style.left = `${x - 30}px`;
-            dollarEffect.style.top = `${y - 30}px`;
+        // ایجاد ذرات
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
             
-            // اضافه کردن متن مقدار در کنار ایموجی
-            const amountText = document.createElement('div');
-            amountText.textContent = `+${formatNumber(amount)}`;
-            amountText.style.position = 'absolute';
-            amountText.style.left = '40px';
-            amountText.style.top = '15px';
-            amountText.style.fontSize = '1.5rem';
-            amountText.style.color = '#4CAF50';
-            amountText.style.textShadow = '0 0 10px rgba(76, 175, 80, 0.8)';
+            // موقعیت تصادفی در اطراف چیپ
+            const aiChipRect = aiChip.getBoundingClientRect();
+            const centerX = aiChipRect.left + aiChipRect.width / 2;
+            const centerY = aiChipRect.top + aiChipRect.height / 2;
             
-            dollarEffect.appendChild(amountText);
-            document.body.appendChild(dollarEffect);
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 50 + Math.random() * 100;
+            const x = centerX + Math.cos(angle) * distance;
+            const y = centerY + Math.sin(angle) * distance;
+            
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            // جهت حرکت تصادفی
+            const tx = (Math.random() - 0.5) * 200;
+            const ty = (Math.random() - 0.5) * 200;
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            
+            document.body.appendChild(particle);
             
             setTimeout(() => {
-                dollarEffect.remove();
+                particle.remove();
+            }, 1000);
+        }
+        
+        // ایجاد افکت سکه
+        function createCoinEffect(x, y) {
+            const coin = document.createElement('div');
+            coin.classList.add('coin-effect');
+            coin.textContent = '💸';
+            coin.style.left = `${x}px`;
+            coin.style.top = `${y}px`;
+            document.body.appendChild(coin);
+            
+            setTimeout(() => {
+                coin.remove();
+            }, 1200);
+        }
+        
+        // ایجاد افکت دلار
+        function createDollarEffect(x, y) {
+            const dollar = document.createElement('div');
+            dollar.classList.add('dollar-effect');
+            dollar.textContent = '+$';
+            dollar.style.left = `${x}px`;
+            dollar.style.top = `${y}px`;
+            document.body.appendChild(dollar);
+            
+            setTimeout(() => {
+                dollar.remove();
             }, 1500);
+        }
+        
+        // مدیریت کلیک روی چیپ
+        function handleChipClick(event) {
+            const currentTime = Date.now();
+            
+            // بررسی زمان بین کلیک‌ها برای جلوگیری از کلیک‌های سریع
+            if (currentTime - lastClickTime < clickCooldown) {
+                return;
+            }
+            
+            lastClickTime = currentTime;
+            
+            // محاسبه مختصات کلیک
+            const rect = aiChip.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            // افزایش امتیاز
+            gameData.score += gameData.clickPower;
+            updateScore();
+            
+            // ایجاد افکت‌ها
+            createClickEffect(event.clientX, event.clientY);
+            
+            // ایجاد افکت سکه (همیشه)
+            createCoinEffect(event.clientX, event.clientY);
+            
+            // ایجاد افکت دلار (تصادفی)
+            if (Math.random() < 0.3) {
+                createDollarEffect(event.clientX, event.clientY);
+            }
+            
+            // ایجاد ذرات (تصادفی)
+            if (Math.random() < 0.5) {
+                createParticle();
+            }
+            
+            // لرزش چیپ
+            aiChip.classList.add('vibration');
+            setTimeout(() => {
+                aiChip.classList.remove('vibration');
+            }, 300);
+            
+            // ذخیره داده‌ها
+            saveGameData();
         }
         
         // ارتقای قدرت کلیک
         function upgradeClickPower() {
             if (gameData.score >= gameData.nextUpgradeCost) {
                 gameData.score -= gameData.nextUpgradeCost;
-                gameData.clickPower = Math.floor(gameData.clickPower * 1.5);
-                gameData.upgradeLevel++;
+                gameData.clickPower += 1;
+                gameData.upgradeLevel += 1;
                 
                 calculateNextUpgradeCost();
+                updateScore();
+                
+                // افکت ارتقا
+                createUpgradeEffect();
+                showNotification('قدرت کلیک ارتقا یافت!');
+                
+                // ذخیره داده‌ها
                 saveGameData();
-                updateUI();
-                
-                // افکت ویژه برای ارتقا
-                const rect = aiChip.getBoundingClientRect();
-                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, 20);
-                
-                // لرزش چیپ AI
-                aiChip.classList.add('vibration');
-                setTimeout(() => {
-                    aiChip.classList.remove('vibration');
-                }, 300);
+            } else {
+                showNotification('سکه کافی ندارید!');
             }
         }
         
-        // کلیک روی چیپ AI
-        function handleAIChipClick(e) {
-            // جلوگیری از کلیک‌های سریع پشت سر هم
-            if (aiChip.classList.contains('vibration')) return;
+        // به‌روزرسانی ماینینگ خودکار
+        function updateAutoMining() {
+            const now = Date.now();
+            const elapsedSeconds = (now - gameData.lastMiningUpdate) / 1000;
             
-            const rect = aiChip.getBoundingClientRect();
-            const globalX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width/2);
-            const globalY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height/2);
-            
-            createClickEffect(globalX, globalY);
-            createParticles(globalX, globalY, 5);
-            showDollarEffect(globalX, globalY, gameData.clickPower);
-            
-            gameData.score += gameData.clickPower;
-            gameData.lastUpdate = Date.now();
-            
-            saveGameData();
-            updateUI();
-            
-            // افکت کلیک روی چیپ AI
-            aiChip.classList.add('vibration');
-            setTimeout(() => {
-                aiChip.classList.remove('vibration');
-            }, 100);
+            if (gameData.autoMiningRate > 0 && elapsedSeconds > 0) {
+                const mined = gameData.autoMiningRate * elapsedSeconds;
+                gameData.minedCoins += mined;
+                gameData.lastMiningUpdate = now;
+                
+                // به‌روزرسانی نمایش
+                minedCoinsElement.textContent = Math.floor(gameData.minedCoins);
+                
+                // به‌روزرسانی نوار پیشرفت
+                const totalTime = 60; // 60 ثانیه برای هر سیکل
+                const elapsedTime = (now - gameData.miningStartTime) / 1000;
+                const progress = (elapsedTime % totalTime) / totalTime * 100;
+                miningProgressElement.style.width = `${progress}%`;
+                
+                // به‌روزرسانی زمان باقیمانده
+                const remainingTime = Math.ceil(totalTime - (elapsedTime % totalTime));
+                miningTimeElement.textContent = remainingTime;
+            }
+        }
+        
+        // جمع‌آوری سکه‌های استخراج شده
+        function collectMinedCoins() {
+            if (gameData.minedCoins > 0) {
+                const collected = Math.floor(gameData.minedCoins);
+                gameData.score += collected;
+                gameData.minedCoins = 0;
+                
+                updateScore();
+                minedCoinsElement.textContent = '۰';
+                
+                showNotification(`${formatNumber(collected)} سکه دریافت شد!`);
+                saveGameData();
+            } else {
+                showNotification('سکه‌ای برای دریافت وجود ندارد!');
+            }
         }
         
         // مدیریت پخش آهنگ
-        function loadSong(index) {
-            try {
-                const songItem = songItems[index];
-                const songSrc = songItem.getAttribute('data-src');
-                const songName = songItem.getAttribute('data-name');
-                
-                backgroundAudio.src = songSrc;
+        function playSong(index) {
+            if (index < 0) index = songItems.length - 1;
+            if (index >= songItems.length) index = 0;
+            
+            currentSongIndex = index;
+            const songItem = songItems[currentSongIndex];
+            const songSrc = songItem.getAttribute('data-src');
+            const songName = songItem.getAttribute('data-name');
+            
+            backgroundAudio.src = songSrc;
+            backgroundAudio.play().then(() => {
+                isPlaying = true;
+                musicIndicator.classList.add('playing');
                 currentSongName.textContent = `آهنگ: ${songName}`;
-                currentSongIndex = index;
                 
-                // به‌روزرسانی وضعیت فعال در لیست
+                // علامت‌گذاری آهنگ فعال
                 songItems.forEach(item => item.classList.remove('active'));
                 songItem.classList.add('active');
-                
-                // اگر در حال پخش بود، پخش را ادامه بده
-                if (isPlaying) {
-                    backgroundAudio.play().catch(e => {
-                        console.error('خطا در پخش آهنگ:', e);
-                    });
-                }
-            } catch (error) {
-                console.error('خطا در بارگذاری آهنگ:', error);
-            }
-        }
-        
-        // پخش آهنگ
-        function playSong() {
-            try {
-                backgroundAudio.play().then(() => {
-                    isPlaying = true;
-                    musicIndicator.classList.add('playing');
-                }).catch(e => {
-                    console.error('خطا در پخش آهنگ:', e);
-                });
-            } catch (error) {
+            }).catch(error => {
                 console.error('خطا در پخش آهنگ:', error);
-            }
+                showNotification('خطا در پخش آهنگ!');
+            });
         }
         
         // توقف آهنگ
-        function pauseSong() {
-            try {
-                backgroundAudio.pause();
-                isPlaying = false;
-                musicIndicator.classList.remove('playing');
-            } catch (error) {
-                console.error('خطا در توقف آهنگ:', error);
-            }
-        }
-        
-        // آهنگ بعدی
-        function nextSong() {
-            currentSongIndex = (currentSongIndex + 1) % songItems.length;
-            loadSong(currentSongIndex);
-        }
-        
-        // آهنگ قبلی
-        function prevSong() {
-            currentSongIndex = (currentSongIndex - 1 + songItems.length) % songItems.length;
-            loadSong(currentSongIndex);
-        }
-        
-        // توقف کامل آهنگ
         function stopSong() {
-            try {
-                backgroundAudio.pause();
-                backgroundAudio.currentTime = 0;
-                isPlaying = false;
-                musicIndicator.classList.remove('playing');
-            } catch (error) {
-                console.error('خطا در توقف آهنگ:', error);
-            }
-        }
-        
-        // کپی آدرس کیف پول
-        function copyWalletAddress() {
-            try {
-                navigator.clipboard.writeText(walletAddress.textContent).then(() => {
-                    showNotification('آدرس کیف پول کپی شد!');
-                }).catch(() => {
-                    // روش جایگزین برای دستگاه‌های قدیمی
-                    const textArea = document.createElement('textarea');
-                    textArea.value = walletAddress.textContent;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    showNotification('آدرس کیف پول کپی شد!');
-                });
-            } catch (error) {
-                console.error('خطا در کپی آدرس:', error);
-                showNotification('خطا در کپی آدرس!');
-            }
-        }
-        
-        // تنظیم رویدادها
-        function setupEventListeners() {
-            // رویدادهای کلیک برای چیپ AI
-            aiChip.addEventListener('click', handleAIChipClick);
-            aiChip.addEventListener('touchstart', handleAIChipClick);
+            backgroundAudio.pause();
+            backgroundAudio.currentTime = 0;
+            isPlaying = false;
+            musicIndicator.classList.remove('playing');
+            currentSongName.textContent = 'آهنگ: -';
             
-            // رویداد ارتقا
+            songItems.forEach(item => item.classList.remove('active'));
+        }
+        
+        // مدیریت رویدادها
+        function setupEventListeners() {
+            // کلیک روی چیپ
+            aiChip.addEventListener('click', handleChipClick);
+            
+            // کلیک روی دکمه ارتقا
             upgradeBtn.addEventListener('click', upgradeClickPower);
             
-            // رویدادهای مودال
+            // باز کردن مودال کارت‌ها
+            cardsBtn.addEventListener('click', () => {
+                generateCards();
+                cardsModal.style.display = 'flex';
+            });
+            
+            // بستن مودال کارت‌ها
+            closeCards.addEventListener('click', () => {
+                cardsModal.style.display = 'none';
+            });
+            
+            // باز کردن مودال حمایت
             donateBtn.addEventListener('click', () => {
                 donateModal.style.display = 'flex';
             });
             
-            musicBtn.addEventListener('click', () => {
-                musicModal.style.display = 'flex';
-                // بارگذاری اولین آهنگ اگر قبلاً بارگذاری نشده
-                if (backgroundAudio.src === '') {
-                    loadSong(0);
-                }
-            });
-            
+            // بستن مودال حمایت
             closeDonate.addEventListener('click', () => {
                 donateModal.style.display = 'none';
             });
             
+            // کپی آدرس کیف پول
+            copyWallet.addEventListener('click', () => {
+                navigator.clipboard.writeText(walletAddress.textContent).then(() => {
+                    showNotification('آدرس کیف پول کپی شد!');
+                }).catch(err => {
+                    console.error('خطا در کپی آدرس:', err);
+                    showNotification('خطا در کپی آدرس!');
+                });
+            });
+            
+            // باز کردن مودال آهنگ
+            musicBtn.addEventListener('click', () => {
+                musicModal.style.display = 'flex';
+            });
+            
+            // بستن مودال آهنگ
             closeMusic.addEventListener('click', () => {
                 musicModal.style.display = 'none';
             });
             
-            // رویدادهای پخش آهنگ
-            playBtn.addEventListener('click', playSong);
-            pauseBtn.addEventListener('click', pauseSong);
-            nextBtn.addEventListener('click', nextSong);
-            prevBtn.addEventListener('click', prevSong);
+            // کنترل‌های پخش آهنگ
+            playBtn.addEventListener('click', () => {
+                if (backgroundAudio.src) {
+                    backgroundAudio.play();
+                    isPlaying = true;
+                    musicIndicator.classList.add('playing');
+                } else {
+                    playSong(0);
+                }
+            });
+            
+            pauseBtn.addEventListener('click', () => {
+                backgroundAudio.pause();
+                isPlaying = false;
+                musicIndicator.classList.remove('playing');
+            });
+            
+            prevBtn.addEventListener('click', () => {
+                playSong(currentSongIndex - 1);
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                playSong(currentSongIndex + 1);
+            });
+            
             stopBtn.addEventListener('click', stopSong);
             
-            // رویدادهای انتخاب آهنگ از لیست
+            // کلیک روی آهنگ‌ها
             songItems.forEach((item, index) => {
                 item.addEventListener('click', () => {
-                    loadSong(index);
-                    playSong();
+                    playSong(index);
                 });
             });
             
-            // رویداد کپی آدرس کیف پول
-            copyWallet.addEventListener('click', copyWalletAddress);
+            // جمع‌آوری سکه‌های استخراج شده
+            collectMiningBtn.addEventListener('click', collectMinedCoins);
             
-            // رویداد پایان آهنگ برای پخش آهنگ بعدی
-            backgroundAudio.addEventListener('ended', nextSong);
-            
-            // بستن مودال با کلیک خارج
-            window.addEventListener('click', (e) => {
-                if (e.target === donateModal) {
+            // بستن مودال‌ها با کلیک خارج از محتوا
+            window.addEventListener('click', (event) => {
+                if (event.target === cardsModal) {
+                    cardsModal.style.display = 'none';
+                }
+                if (event.target === donateModal) {
                     donateModal.style.display = 'none';
                 }
-                if (e.target === musicModal) {
+                if (event.target === musicModal) {
                     musicModal.style.display = 'none';
                 }
             });
-            
-            // ذخیره خودکار هر 30 ثانیه
-            setInterval(() => saveGameData(), 30000);
-            
-            // ذخیره هنگام بسته شدن صفحه
-            window.addEventListener('beforeunload', () => saveGameData());
+        }
+        
+        // حلقه بازی
+        function gameLoop() {
+            updateAutoMining();
+            requestAnimationFrame(gameLoop);
         }
         
         // مقداردهی اولیه بازی
         function initGame() {
-            // ایجاد ستاره‌ها
             createStars();
-            
-            // بارگذاری داده‌های ذخیره شده
             loadGameData();
-            
-            // تنظیم رویدادها
+            updateScore();
+            calculateAutoMining();
             setupEventListeners();
+            gameLoop();
             
-            // به‌روزرسانی UI
-            updateUI();
-            
-            console.log('بازی با موفقیت بارگذاری شد!');
+            // شروع ماینینگ اگر کارت ارتقا یافته داریم
+            if (gameData.autoMiningRate > 0 && gameData.miningStartTime === 0) {
+                gameData.miningStartTime = Date.now();
+                gameData.lastMiningUpdate = Date.now();
+            }
         }
         
-        // شروع بازی پس از بارگذاری صفحه
-        document.addEventListener('DOMContentLoaded', initGame);
+        // شروع بازی
+        window.addEventListener('load', initGame);
     </script>
 </body>
 </html>
